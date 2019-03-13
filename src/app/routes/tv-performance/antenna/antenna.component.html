@@ -1,0 +1,118 @@
+<section class="row">
+  <div class="col-lg-6">
+    <art-flight-details [flightDetails]="flightDetails" [componentId]="['tv-antenna']" [colClass]="['col']"></art-flight-details>
+    <div>
+      <art-section-title [sectionTitle]="['RSSI STATUS']"></art-section-title>
+      <div class="row mt-3">
+        <div class="col-3">
+          <label id="lbl-high-rssi">HIGHEST RSSI</label>
+          <p class="high-rssi-value"><span class="circle" [ngClass]="{'circle-danger': rssiRange['highest'] && (rssiRange['highest'] >= 7.9 || rssiRange['highest'] <= -17), 'circle-success': rssiRange['highest'] && (rssiRange['highest'] <= 7.9 || rssiRange['highest'] >= -17) }"></span>
+            <span class="pl-2">{{rssiRange['highest'] ? rssiRange['highest'] : 0}}</span></p>
+        </div>
+        <div class="col-3">
+          <label id="lbl-low-rssi">LOWEST RSSI</label>
+          <p class="low-rssi-value"><span class="circle" [ngClass]="{'circle-danger': rssiRange['lowest'] && (rssiRange['lowest'] >= 7.9 || rssiRange['lowest'] <= -17), 'circle-success': rssiRange['lowest'] && (rssiRange['lowest'] <= 7.9 || rssiRange['lowest'] >= -17) }"></span>
+            <span class="pl-2">{{rssiRange['lowest'] ? rssiRange['lowest'] : 0}}</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6 mt-4">
+    <art-kpi-card [cardTitle]="['RSSI']" [showTime]="false">
+      <div id="rssi-chart" [chart]="splineChart" ></div>
+    </art-kpi-card>
+  </div>
+</section>
+<art-section-title [sectionTitle]="['ANTENNA DETAILS']"></art-section-title>
+<div class="mt-2" id="antenna-filter-block">
+  <art-filter-button [filterData]="data" [datasource]="dataSource" (selectFilter)="getFilteredData($event)" [isloading]="isLoading"></art-filter-button>
+</div>
+<div class="row mt-3" [ngClass]="{'tv-sticky-mat-table': !isLoading && dataSource?.data?.length}">
+  <table mat-table [dataSource]="dataSource" class="col-12" matSort id="tbl-antenna-data">
+    <ng-container matColumnDef="timeStamp">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>TIMESTAMP (UTC)</th>
+      <td mat-cell *matCellDef="let element">{{element['timeStamp'] | date: 'MM/dd/yyyy HH:mm:ss' : 'UTC'}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="flightPhaseId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> FLIGHT PHASE </th>
+      <td mat-cell *matCellDef="let element"> {{element['flightPhaseId']}} - {{element['flightPhase'] | flightPhase}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="antennaState">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> ANTENNA STATE </th>
+      <td mat-cell *matCellDef="let element"> {{element['antennaState']}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="eti">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> ETI </th>
+      <td mat-cell *matCellDef="let element">
+        <span placement="top" ngbTooltip="{{element['eti'] | eti }}">{{element['eti']}}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="rssi">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>RSSI</th>
+      <td mat-cell *matCellDef="let element">
+        <span class="circle" [ngClass]="{'circle-danger': element['rssi'] >= 7.9 || element['rssi'] <= -17,
+            'circle-success': element['rssi'] <= 7.9 || (element['rssi'] >= -17) }">
+        </span> {{element['rssi']}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="azimuth">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>AZIMUTH</th>
+      <td mat-cell *matCellDef="let element">{{element['azimuth']}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="elevation">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> ELEVATION
+      </th>
+      <td mat-cell *matCellDef="let element"> {{element['elevation']}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="latitude">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> LATITUDE </th>
+      <td mat-cell *matCellDef="let element">{{element['latitude'] | number:'.1-2'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="longitude">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>LONGITUDE </th>
+      <td mat-cell *matCellDef="let element"> {{element['longitude'] | number:'.1-2'}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="altitude">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>ALTITUDE</th>
+      <td mat-cell *matCellDef="let element"> {{element['altitude']}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="heading">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> HEADING</th>
+      <td mat-cell *matCellDef="let element">{{element['heading']}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="speed">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>SPEED</th>
+      <td mat-cell *matCellDef="let element">{{element['speed']}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="bitFlag">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>BIT FLAG</th>
+      <td mat-cell *matCellDef="let element">
+        <span class="pl-1 badge" [ngClass]="{'badge-success': element['bitFlag'] === 'fffe',
+        'badge-danger': element['bitFlag'] !== 'fffe'}">{{element['bitFlag']}}</span>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-card [hidden]="!isLoading" class="text-center col-12">
+    Loading...
+  </mat-card>
+  <mat-card *ngIf="!isLoading && !dataSource?.data?.length" class="text-center col-12">
+    No Records Found...
+  </mat-card>
+</div>
+
+<art-action-toolbar [config]="actionToolBarConfig" (getSearchText)="flightFilter($event)"
+></art-action-toolbar>

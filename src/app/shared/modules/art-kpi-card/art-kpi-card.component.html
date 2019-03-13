@@ -1,0 +1,11 @@
+<section class="card">
+  <div class="card-header">
+    <span class="card-title">{{cardTitle}}</span>
+    <span *ngIf="showTime" class="updated-time">
+        {{updatedTime}}
+    </span>
+  </div>
+  <div class="card-body">
+    <ng-content></ng-content>
+  </div>
+</section>

@@ -1,0 +1,58 @@
+.mat-row .mat-cell,
+.mat-header-cell,
+.mat-sort-header-container,
+.mat-sort-header-button,
+.mat-sort-header-arrow {
+  color: $dark !important;
+}
+
+.mat-header-cell {
+  font-size: 10px !important;
+}
+
+.mat-row:hover {
+  background-color: $light-grey-03;
+}
+
+.mat-row:hover .mat-accent .mat-checkbox-background {
+  background-color: white !important;
+  border-radius: 0px !important;
+}
+
+.mat-row:hover .mat-checkbox-checked .mat-checkbox-background {
+  background-color: $light-blue !important;
+  border-radius: 0px !important;
+}
+
+.mat-row:hover .mat-cell{
+  color: $dark;
+}
+
+.mat-row:active {
+  background-color: $light-blue;
+}
+
+.mat-row:active .mat-cell{
+  color: white !important;
+}
+
+// remove focus
+
+.mat-sort-header-button{
+  outline: none !important;
+}
+
+// remove borders for rows (except last row for footer)
+
+td.mat-cell {
+  border-bottom-width: 0px !important;
+}
+
+.mat-paginator-container {
+  border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
+// vertically center checkbox for row
+.mat-checkbox-layout {
+  vertical-align: super !important;
+}

@@ -1,0 +1,33 @@
+/***** Date Picker   *****/
+.date-range-picker {
+  opacity:0;
+  width:0px;
+}
+.date-range-picker-color {
+  color: $light-blue !important;
+}
+.custom-day {
+  text-align: center;
+  padding: 0.185rem 0.25rem;
+  display: inline-block;
+  height: 2rem;
+  width: 2rem;
+}
+.custom-day.focused {
+  background-color: $light-blue; 
+}
+.custom-day.range, .custom-day:hover {
+  background-color: $blue-grey;
+  color: white;
+}
+.custom-day.faded {
+  background-color: $light-blue; // rgba(2, 117, 216, 0.5);
+}
+
+.ngb-dp-weekday {
+  color: $light-blue !important;
+}
+
+.ngb-dp-arrow > .btn {
+  color: $light-blue !important;
+}

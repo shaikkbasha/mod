@@ -1,0 +1,39 @@
+<div class="object-header">
+  <div class="row p-4 text-center">
+    <div class="col-12">
+      <h6 style="display: inline; font-weight: 700">
+        <img class="mr-3" src="./assets/objects/airline-modal.png" width="32px" height="32px" style="vertical-align: sub; margin-right: 5px">
+        <span>{{tailNumber}}</span>
+      </h6>
+    </div>
+  </div>
+  <div class="row text-center">
+    <div class="col-12">
+      <div class="btn-group active" role="group" *ngIf="currentAirlineId != null || currentAirlineId != undefined">
+        <button type="button" class="btn btn-tab btn-sm btn-tab-m-w"
+                [routerLink]="['/airline', currentAirlineId, 'tail', tailNumber, 'tab']"
+                [class.active]="isActive(['airline', currentAirlineId, 'tails', tailNumber, 'tab'])" id="btn-tail-tab">
+          Tab
+        </button>
+        <button type="button" class="btn btn-tab btn-sm btn-tab-m-w"
+                [routerLink]="['/airline', currentAirlineId, 'tail',tailNumber, 'flights' ]"
+                [class.active]="isActive(['airline', currentAirlineId, 'tails', tailNumber, 'flights'])" id="btn-tail-flights">
+          Flights </button>
+        <button type="button" class="btn btn-tab btn-sm btn-tab-m-w"
+                [routerLink]="['/airline', currentAirlineId, 'tail',tailNumber, 'tab2']"
+                [class.active]="isActive(['airline', currentAirlineId, 'tails', 'tab2'])" id="btn-tab2-flights">
+          Tab
+        </button>
+        <button type="button" class="btn btn-tab btn-sm btn-tab-m-w"
+                [routerLink]="['/airline', currentAirlineId, 'tail',tailNumber, 'tab3']"
+                [class.active]="isActive(['airline', currentAirlineId, 'tails', 'tab3'])">
+          Tab
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="content-area">
+  <router-outlet></router-outlet>
+</div>
+

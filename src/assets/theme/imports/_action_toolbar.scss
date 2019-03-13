@@ -1,0 +1,81 @@
+/* enable absolute positioning */
+.inner-addon {
+  position: relative;
+}
+
+/* style glyph */
+.inner-addon .search {
+  position: absolute;
+  padding: 10px;
+  pointer-events: none;
+}
+
+.action-toolbar-search {
+  border-radius:100px !important;
+}
+
+/* align glyph */
+.left-addon .search  { left:  0px;}
+.right-addon .search { right: 15px;}
+
+/** Action Toolbar **/
+.toolbar-search-icon {
+  color: $light-blue;
+}
+.navbar-nav .tool-bar-search:hover {
+  background-color: $dark !important; // $dark !important;
+  color: $white !important;
+}
+
+.nav-item .tool-bar-navLink:active .tool-bar-navLink .toolbar-search-icon{
+  color: $white !important;
+  background-color: $light-blue !important;
+}
+.art-action-toolbar .highlight-action-toolbar {
+  background-color: $light-blue !important;
+}
+.highlight-action-toolbar-icon-color{
+  color: $white !important;
+}
+
+.action-tool-bar {
+  height: 48px;
+}
+
+.search{
+  color: $light-blue !important;  
+  position: absolute;
+  right: 36px;
+  // top: 8px;
+}
+.navbar-nav .tool-bar-nav-link:active{
+  background-color: $light-blue !important;
+}
+.navbar-nav .tool-bar-nav-link:active .toolbar-search-icon{
+  color: $white !important;
+}
+
+
+.tool-bar-navLink:hover, .tool-bar-search {
+  height: 48px !important;
+  padding: 15px !important;
+}
+
+.navbar-nav .tool-bar-navLink:hover{
+  background-color: $blue-grey !important;
+}
+.action-tool-bar {
+  background-color: $carbon-03;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+.action-toolbar-search{
+  height: 30px !important;
+  max-width: 360px;
+  // width: 90% !important;
+}
+.navbar-nav .tool-bar-navLink:active {
+  background-color: $dark-grey !important;
+}

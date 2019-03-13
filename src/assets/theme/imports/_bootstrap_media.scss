@@ -1,0 +1,124 @@
+.content-area {
+  font-size: 13px !important;
+}
+
+/* Huge Screen */
+@media (min-width: 1596px) {
+
+  .header {
+    height: 36px !important;
+    background-color: $dark;
+    color: white;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+  }
+
+  .object-header {
+    height: 144px;
+    background-color: $carbon-02;
+    color: white;
+    text-align: center;
+  }
+
+  .content-area {
+    height: 100%;
+    margin: 36px auto;
+    max-width: 1104px
+  }
+}
+
+/* Tier 1 */
+@media (max-width: 1595px) {
+
+  .header {
+    height: 36px !important;
+    background-color: $dark;
+    color: white;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+  }
+
+  .object-header {
+    height: 144px;
+    background-color: $carbon-02;
+    color: white;
+    text-align: center;
+  }
+
+  .content-area {
+    margin: 36px auto;
+    max-width: 1104px
+  }
+}
+
+/* Tier 2 */
+@media (max-width: 1223px) {
+
+  .header {
+    height: 36px !important;;
+    background-color: $dark;
+    color: white;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+  }
+
+  .object-header {
+    width: 100%;
+    height: 144px;
+    background-color: $carbon-02;
+    color: white;
+    text-align: center;
+  }
+
+  .content-area {
+    margin: 36px auto;
+    max-width: 904px
+  }
+}
+
+/* Tier 3 */
+@media (max-width: 1022px) {
+
+  .header {
+    height: 36px !important;;
+    background-color: $dark;
+    color: white;
+  }
+
+  .object-header {
+    height: 144px;
+    background-color: $carbon-02;
+    color: white;
+    text-align: center;
+  }
+
+  .content-area {
+    margin: 36px auto;
+    max-width: 598px
+  }
+}
+
+/* Mobile Devices */
+@media (max-width: 414px) {
+
+  .header {
+    height: 72px !important;;
+    background-color: $dark;
+    color: white;
+  }
+
+  .object-header {
+    height: 130px;
+    background-color: $carbon-02;
+    text-align: center;
+  }
+
+  .content-area {
+    margin: 24px auto;
+    max-width: 312px
+  }
+}

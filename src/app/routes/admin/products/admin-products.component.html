@@ -1,0 +1,413 @@
+<div class="object-body col-12">
+
+    <mat-tab-group (selectedTabChange)="getTabName($event)">
+  
+      <mat-tab label="Details">
+        <div>
+          <div class="mt-2 col-4 d-inline float-left vertical-line row" [hidden]="productsObj.isLoading">
+            <div>
+              <input id="filter" *ngIf="!productsObj.isLoading" class="form-control d-inline" #filter (keyup)="tree.treeModel.filterNodes(filter.value);tree.treeModel.collapseAll()"
+                placeholder="Filter" /> 
+            </div>
+            <tree-root #tree [focused]="true" [options]="options" [nodes]="nodes" class="products-tree">
+              <ng-template #treeNodeTemplate let-node let-index="index">
+                <span (click)="getNode(node.data)">{{ node.data.name }}</span>
+              </ng-template>
+            </tree-root>
+          </div>
+          <div class="col-8 float-left mb-4" [hidden]="productsObj.isLoading">
+  
+            <nav class="breadcrumb product-breadcrumb" *ngIf="productsObj.breadCrumbObj.length;">
+              <span *ngFor="let name of productsObj.breadCrumbObj;let i = index" class="breadcrumb-item product-breadcrumb-item active">
+                <span *ngIf="(productsObj.breadCrumbObj.length-1) != i">{{name}}</span>
+                <strong *ngIf="(productsObj.breadCrumbObj.length-1) == i">{{name}}</strong>
+              </span>
+            </nav>
+  
+            <table id="tbl-products" #pSort='matSort' mat-table [dataSource]="dataSource" matSort class="col-12">
+  
+              <!-- Checkbox Column -->
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+                </th>
+                <td mat-cell *matCellDef="let row;let i = index">
+                  <mat-checkbox [disableRipple]="true" (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null; selectedRow(selection.selected)"
+                    [checked]="selection.isSelected(row)">
+                  </mat-checkbox>
+                </td>
+              </ng-container>
+              <!-- name Column -->
+              <ng-container [matColumnDef]="column" *ngFor="let column of productsObj.displayColumns; let j=index">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{productsObj.displayHeader[j]}} </th>
+                <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+              </ng-container>
+  
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row;let i = index; columns: displayedColumns;" (click)="selection.toggle(row); selectedRow(selection.selected)">
+              </tr>
+            </table>
+            <div *ngIf="((!productsObj.isLoading && dataSource.data && !dataSource.data.length) || !dataSource.data)"
+              class="text-center">
+              No Records Found..
+            </div>
+            <!-- <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator> -->
+          </div>
+          <div class="col-8 text-center" *ngIf="productsObj.isLoading">Loading..</div>
+  
+         
+          <!--- Create LRU Type Form --->
+          <ng-template #lruPartNumberForm let-c="close" let-d="dismiss" class="modal" id="mod-lrupartnumberform">
+            <div class="modal-header">
+              <h6 class="w-100 modal-title text-center">{{productsObj.form.name}}</h6>
+              <button id="btn-products-close" type="button" [disabled]="productsObj.modalConfig.isLoading" class="close" aria-label="Close"
+                (click)="d('Cross click');productsObj.form.isError = false;;cancelEvent();productsObj.lruPartNumber.value=''">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="alert alert-danger" *ngIf="productsObj.form.isError">
+                <a (click)='productsObj.form.isError = false' class="close" data-dismiss="alert" id="lnk-close-pnumber-error-msg">&times;</a>
+                <span *ngIf="productsObj.form.errorMsg">{{productsObj.form.errorMsg}}</span>
+              </div>
+  
+              <div class="form-group">
+                <div class="col-12 ">
+                  <label class="field col-3" id="lbl-product-partNumber">PART NUMBER </label>
+                  <label class="field d-inline mr-5"  id="lbl-product-configuration">CONFIGURATION </label>
+                </div>
+              </div>
+  
+              <div class="form-group">
+                <div class="col-12 d-inline-block">
+                  <label class="field col-3" id="lbl-product-partnumber">{{productsObj.getSelectedNode.partNumber}} - </label>
+                  <input id="inp-lrupart-number" type="text" ngbAutofocus [(ngModel)]="productsObj.lruPartNumber.value" class="form-control col-9 content-dark d-inline"
+                    #lruPartNumber maxlength="60" [ngClass]="{ 'invalid-feedback': !lruPartNumber.value && productsObj.lruPartNumber.isSubmitted}" />
+                </div>
+              </div>
+  
+            </div>
+  
+            <div class="modal-footer form-group">
+              <button type="button" id="lrunPartNoModalIds.closeBtn" [attr.id]="productsObj.modalConfig.id"  [disabled]="productsObj.modalConfig.isLoading" class="btn btn-secondary art-button"
+                (click)="c('Save click');cancelEvent();productsObj.lruPartNumber.value=''">Cancel</button>
+              <button class="btn btn-primary art-button" id="btn-products-savelrutype" [disabled]="productsObj.modalConfig.isLoading" (click)="getLRUPartNumber(lruPartNumber.value)">
+                <i class="fa fa-spinner fa-pulse fa-fw mr-1" *ngIf="productsObj.modalConfig.isLoading"></i>
+                {{productsObj.modalConfig.saveButtonLabel}}
+              </button>
+            </div>
+          </ng-template>
+  
+          <!--- Create LRU Type Form --->
+          <ng-template #productForm let-c="close" let-d="dismiss" class="modal" id="mod-productform">
+            <div>
+              <div class="modal-header">
+                <h6 class="w-100 modal-title text-center">{{productsObj.form.name}}</h6>
+                <button type="button" [disabled]="productsObj.modalConfig.isLoading" class="close" aria-label="Close" id="btn-admin-product-"
+                  (click)="d('Cross click');productsObj.form.isError = false;resetForm();">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="alert alert-danger" *ngIf="productsObj.form.isError">
+                <a (click)='productsObj.form.isError = false' id="lnk-cancel-errorMsg" class="close" data-dismiss="alert">&times;</a>
+                <span *ngIf="productsObj.form.errorMsg">{{productsObj.form.errorMsg}}</span>
+              </div>
+              <art-dynamic-form [formConfig]="productsObj.lruTypeForm" (formData)="getFormData($event)" [configObj]="productsObj.modalConfig"
+                (cancelEvent)="cancelEvent()"></art-dynamic-form>
+            </div>
+          </ng-template>
+  
+          <!--- Create LRU Name Form --->
+          <ng-template  id="mod-lrunamepartnoForm" #lruNamePartNoForm let-c="close" let-d="dismiss" class="modal">
+            <div>
+              <div class="modal-header">
+                <h6 class="w-100 modal-title text-center">{{productsObj.form.name}}</h6>
+                <button  id="btn-close-lruPartNoForm" type="button"  [disabled]="productsObj.modalConfig.isLoading" class="close" aria-label="Close"
+                  (click)="d('Cross click');productsObj.form.isError = false;resetForm();">
+                  <span aria-hidden="true" id="spn-lruname-close">&times;</span>
+                </button>
+              </div>
+              <div class="alert alert-danger" *ngIf="productsObj.form.isError">
+                <a (click)='productsObj.form.isError = false' id="btn-lruPartNoForm-clearMsg" class="close" data-dismiss="alert">&times;</a>
+                <span *ngIf="productsObj.form.errorMsg"  id="spn-lruname-errorMsg">{{productsObj.form.errorMsg}}</span>
+              </div>
+              <art-dynamic-form [formConfig]="productsObj.lruNameForm" (formData)="getFormData($event)" [configObj]="productsObj.modalConfig"
+                (cancelEvent)="cancelEvent()"></art-dynamic-form>
+            </div>
+          </ng-template>
+        </div>
+  
+      </mat-tab>
+  
+      <mat-tab label="Reasons of Removal">
+        <div class="mt-2" *ngIf="!reasonOfRemoval.isLoading"> 
+          <div class="col-4">
+              <select class="form-control" #mlruTypeDropDownList (change)="getLRUTypeList(mlruTypeDropDownList.value)" [(ngModel)]="reasonOfRemoval.form.obj.getLruType" id="select-lruTypes">
+                  <option *ngFor="let lruType of reasonOfRemoval.lruTypes" [value]="lruType.id">
+                  {{lruType.name}}
+                  </option>
+              </select>
+          </div>
+
+          <table id="tbl-reasonofremovals" #reasonsoFRemovalSort="matSort" mat-table [dataSource]="reasonOfRemoval.dataSource" matSort matSortActive="description" matSortDirection="asc" class="col-12">
+  
+              <!-- Checkbox Column -->
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+                </th>
+                <td mat-cell *matCellDef="let row;let i = index">
+                  <mat-checkbox [disableRipple]="true" (click)="$event.stopPropagation()" (change)="$event ? removalSelection.toggle(row) : null; removalSelectedRow(removalSelection.selected)"
+                    [checked]="removalSelection.isSelected(row)">
+                  </mat-checkbox>
+                </td>
+              </ng-container>
+              
+              <!-- name Column -->
+              <ng-container *ngFor="let column of reasonOfRemoval.displayColumns; let j=index" [matColumnDef]="column">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{reasonOfRemoval.displayHeader[j]}} </th>
+                <td mat-cell *matCellDef="let element"> 
+                  <span *ngIf="column == 'allPN'">
+                    <span *ngIf="element[column] == true" class="badge badge-secondary" id="spn-reasonofremovals-yes">
+                        YES
+                    </span>
+                    <span *ngIf="element[column] == false" class="badge badge-secondary" id="spn-reasonofremovals-no">
+                        NO
+                    </span>
+                  </span> 
+                  <span *ngIf="column != 'allPN'" id="spn-reasonofremovals-column">{{element[column]}}</span> 
+                </td>
+              </ng-container>
+  
+              <tr mat-header-row *matHeaderRowDef="removalDisplayedColumns"></tr>
+              <tr mat-row *matRowDef="let row;let i = index; columns: removalDisplayedColumns;" (click)="removalSelection.toggle(row); removalSelectedRow(removalSelection.selected)">
+              </tr>
+            </table>            
+            <div *ngIf="(!reasonOfRemoval.getTableData && (!reasonOfRemoval.dataSource || !reasonOfRemoval.dataSource.data || !reasonOfRemoval.dataSource.data.length))" class="text-center">
+               No Records Found..
+            </div>
+            <div *ngIf="reasonOfRemoval.getTableData" class="text-center">
+                Loading...
+             </div>
+        </div>
+        <div class="text-center" *ngIf="reasonOfRemoval.isLoading">Loading</div>
+
+         <!--- Reason Of Removal --->
+         <ng-template #reaonsOfRemoval id="mod-reaonsofremoval" let-c="close" let-d="dismiss" class="modal">
+            <div>
+              <div class="modal-header">
+                <h6 class="w-100 modal-title text-center">{{reasonOfRemoval.headText}}</h6>
+                <button type="button" [disabled]="reasonOfRemoval.form.obj.isFormLoading" class="close" aria-label="Close"
+                  (click)="d('Cross click');reasonOfRemoval.form.isError = false;clearRemoval();">
+                  <span aria-hidden="true" id="spn-reaonsofremoval-closebtn">&times;</span>
+                </button>
+              </div>
+                <div class="modal-body">
+                  <div class="alert alert-danger" *ngIf="reasonOfRemoval.form.isError">
+                    <a  id="lnk-close-reasonofremoval-error-msg" (click)='reasonOfRemoval.form.isError = false' class="close" data-dismiss="alert">&times;</a>
+                    <span *ngIf="reasonOfRemoval.form.errorMsg" id="spn-reaonsofremoval-error-msg">
+                      {{reasonOfRemoval.form.errorMsg}}
+                    </span>
+                  </div>
+      
+                  <div class="form-group">
+                    <div class="col-12 d-inline-block">
+                      <label class="field" id="lbl-description">DESCRIPTION</label>
+                      <input id="inp-reasonofremovaldesc" type="text" ngbAutofocus [(ngModel)]="reasonOfRemoval.form.obj.description" class="form-control content-dark d-inline"
+                        #reasonofremovaldesc maxlength="60" [ngClass]="{ 'invalid-feedback': !reasonofremovaldesc.value && reasonOfRemoval.form.isSubmitted}" />
+                        <span  id="spn-reaonsofremoval-description" class="invalid-feedback d-inline" *ngIf="!reasonofremovaldesc.value && reasonOfRemoval.form.isSubmitted">
+                          Description is Required
+                        </span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="col-12 d-inline-block">
+                          <label class="field col-12" id="lbl-part-numbers">PART NUMBERS</label>
+                          <mat-radio-group name="partnumbers"  fxLayout="column" [(ngModel)]="reasonOfRemoval.form.obj.partnumber">
+                            <mat-radio-button [disableRipple]="true" *ngFor="let op of reasonOfRemoval.radioList" [value]="op.value" [name]="op.name" class="removal-radio-btn p-3" >
+                              {{ op.name}}
+                            </mat-radio-button>
+                          </mat-radio-group>
+                      </div>
+                      <div class="col-4" [hidden]='reasonOfRemoval.form.obj.partnumber != "specific"'>
+                          <ss-multiselect-dropdown class="multi-select-dropdown" [options]="reasonOfRemoval.partNumbers" [(ngModel)]="reasonOfRemoval.form.obj.partnumbersList" #mlruTypeDropDownList (ngModelChange)="getSelectedPartNumbers($event)">
+                          </ss-multiselect-dropdown>
+                      </div>
+                      <span id="spn-reaonsofremoval-partnumber" class="ml-3 invalid-feedback d-inline" *ngIf="reasonOfRemoval.form.obj.partnumber == 'specific' && reasonOfRemoval.form.isSubmitted && (!reasonOfRemoval.form.obj.partnumbersList || !reasonOfRemoval.form.obj.partnumbersList.length)">
+                          Part Number is Required
+                        </span>
+                  </div>
+      
+                </div>
+      
+                <div class="modal-footer form-group">
+                  <button type="button" id="btn-cancel-products" [disabled]="reasonOfRemoval.form.obj.isFormLoading" class="btn btn-secondary art-button"
+                    (click)="c('Save click');clearRemoval()">Cancel</button>
+                  <button class="btn btn-primary art-button col-4" (click)="saveReasonOfRemoval();" id="btn-save-products" [disabled]="reasonOfRemoval.form.obj.isFormLoading">
+                    <i class="fa fa-spinner fa-pulse fa-fw mr-1" *ngIf="reasonOfRemoval.form.obj.isFormLoading"></i>
+                    {{reasonOfRemoval.form.obj.saveButtonLabel}}
+                  </button>
+                </div>
+            </div>
+          </ng-template>
+      </mat-tab>
+  
+      <mat-tab label="Repair Actions">
+        <div class="mt-2" *ngIf="!repairAction.isLoading"> 
+          <div class="col-4">
+              <select class="form-control" #repairActionlruTypeList (change)="getLRUTypeList(repairActionlruTypeList.value)" [(ngModel)]="repairAction.form.obj.getLruType" id="select-repairLruTypes">
+                  <option *ngFor="let lruType of repairAction.lruTypes" [value]="lruType.id">
+                  {{lruType.name}}
+                  </option>
+              </select>
+          </div>
+
+          <table id="tbl-repairAction"  #repairActionsSort="matSort"  mat-table [dataSource]="repairAction.dataSource" matSort matSortActive="description" matSortDirection="asc" class="col-12">
+  
+              <!-- Checkbox Column -->
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+                </th>
+                <td mat-cell *matCellDef="let row;let i = index">
+                  <mat-checkbox [disableRipple]="true" (click)="$event.stopPropagation()" (change)="$event ? repairActionSelection.toggle(row) : null; removalSelectedRow(repairActionSelection.selected)"
+                    [checked]="repairActionSelection.isSelected(row)">
+                  </mat-checkbox>
+                </td>
+              </ng-container>
+              
+              <!-- name Column -->
+              <ng-container [matColumnDef]="column" *ngFor="let column of repairAction.displayColumns; let j=index">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> {{repairAction.displayHeader[j]}} </th>
+                <td mat-cell *matCellDef="let element"> 
+                  <span *ngIf="column == 'allPN'">
+                    <span *ngIf="element[column] == true" id="spn-repairaction-colyes" class="badge badge-secondary">
+                        YES
+                    </span>
+                    <span *ngIf="element[column] == false" class="badge secondary" id="spn-repairaction-colno">
+                        NO
+                    </span>
+                  </span> 
+                  <span *ngIf="column != 'allPN'" id="spn-repairaction-column">{{element[column]}}</span> 
+                </td>
+              </ng-container>
+  
+              <tr mat-header-row *matHeaderRowDef="removalDisplayedColumns"></tr>
+              <tr mat-row *matRowDef="let row;let i = index; columns: removalDisplayedColumns;" (click)="repairActionSelection.toggle(row); removalSelectedRow(repairActionSelection.selected)">
+              </tr>
+            </table>            
+            <div *ngIf="(!repairAction.getTableData && (!repairAction.dataSource || !repairAction.dataSource.data || !repairAction.dataSource.data.length))" class="text-center">
+               No Records Found..
+            </div>
+            <div *ngIf="repairAction.getTableData" class="text-center">
+                Loading...
+             </div>
+        </div>
+        <div class="text-center" *ngIf="repairAction.isLoading">Loading</div>
+
+         <!--- Reason Of Removal --->
+         <ng-template #repairactionTemplate id="mod-repair-action" let-c="close" let-d="dismiss" class="modal">
+            <div>
+              <div class="modal-header">
+                <h6 class="w-100 modal-title text-center">{{repairAction.headText}}</h6>
+                <button type="button" [disabled]="repairAction.form.obj.isFormLoading" class="close" aria-label="Close"
+                  (click)="d('Cross click');repairAction.form.isError = false;clearRemoval();">
+                  <span aria-hidden="true"  id="spn-repairactionTemplate-close">&times;</span>
+                </button>
+              </div>
+                <div class="modal-body">
+                  <div class="alert alert-danger" *ngIf="repairAction.form.isError">
+                    <a  id="lnk-close-repairAction-error-msg" (click)='repairAction.form.isError = false' class="close" data-dismiss="alert">&times;</a>
+                    <span  id="spn-repairactionTemplate-errormsg" *ngIf="repairAction.form.errorMsg">{{repairAction.form.errorMsg}}</span>
+                  </div>
+      
+                  <div class="form-group">
+                    <div class="col-12 d-inline-block">
+                      <label class="field" id="lbl-description">DESCRIPTION</label>
+                      <input id="inp-repairaction-template" type="text" ngbAutofocus [(ngModel)]="repairAction.form.obj.description" class="form-control content-dark d-inline"
+                        #repairActiondesc maxlength="60" [ngClass]="{ 'invalid-feedback': !repairActiondesc.value && repairAction.form.isSubmitted}" />
+                        <span id="spn-repairactionTemplate-description" class="invalid-feedback d-inline" *ngIf="!repairActiondesc.value && repairAction.form.isSubmitted">
+                          Description is Required
+                        </span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                      <div class="col-12 d-inline-block">
+                          <label class="field col-12" id="lbl-part-numbers">PART NUMBERS</label>
+                          <mat-radio-group name="partnumbers"  fxLayout="column" [(ngModel)]="repairAction.form.obj.partnumber">
+                            <mat-radio-button [disableRipple]="true" *ngFor="let op of repairAction.radioList" [value]="op.value" [name]="op.name" class="removal-radio-btn p-3" >
+                              {{ op.name}}
+                            </mat-radio-button>
+                          </mat-radio-group>
+                      </div>
+                      <div class="col-4" [hidden]='repairAction.form.obj.partnumber != "specific"'>
+                          <ss-multiselect-dropdown class="multi-select-dropdown" [options]="repairAction.partNumbers" [(ngModel)]="repairAction.form.obj.partnumbersList" #mlruTypeDropDownList (ngModelChange)="getSelectedPartNumbers($event)">
+                          </ss-multiselect-dropdown>
+                      </div>
+                      <span id="spn-repairactionTemplate-partnumber" class="ml-3 invalid-feedback d-inline" *ngIf="repairAction.form.obj.partnumber == 'specific' && repairAction.form.isSubmitted && (!repairAction.form.obj.partnumbersList || !repairAction.form.obj.partnumbersList.length)">
+                          Part Number is Required
+                        </span>
+                  </div>
+      
+                </div>
+      
+                <div class="modal-footer form-group">
+                  <button type="button" id="btn-cancel-products" [disabled]="repairAction.form.obj.isFormLoading" class="btn btn-secondary art-button"
+                    (click)="c('Save click');clearRemoval()">Cancel</button>
+                  <button class="btn btn-primary art-button col-4" (click)="saveReasonOfRemoval();" id="btn-save-products" [disabled]="repairAction.form.obj.isFormLoading">
+                    <i class="fa fa-spinner fa-pulse fa-fw mr-1" *ngIf="repairAction.form.obj.isFormLoading"></i>
+                    {{repairAction.form.obj.saveButtonLabel}}
+                  </button>
+                </div>
+            </div>
+          </ng-template>
+      </mat-tab>
+  
+      <mat-tab label="Service Bulletins">
+        Service Bulletins
+      </mat-tab>
+  
+      <mat-tab label="Parser Rules">
+        Parser Rules
+      </mat-tab>
+  
+    </mat-tab-group>
+  
+    <ng-template #deleteModal let-c="close" let-d="dismiss" class="modal"  id="mod-delete-modal">
+      <div>
+        <div class="modal-header">
+          <h6 class="modal-title w-100 text-center">Delete {{deleteObj.moduleName}}</h6>
+          <button type="button" id="btn-dismiss-deleteModal" class="close" aria-label="Close" (click)="d('Cross click');deleteObj.isError = false;"
+            [disabled]="deleteObj.isDeleted">
+            <span aria-hidden="true" id="spn-close-deletemodal">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body pt-md-4">
+          <div class="alert alert-danger" *ngIf="deleteObj.isError">
+            <a (click)='deleteObj.isError = false' class="close" data-dismiss="alert" id="lnk-close-error-msg">&times;</a>
+            <span id="spn-deletemodal-errormsg" *ngIf="deleteObj.errorMsg">{{deleteObj.errorMsg}}</span>
+          </div>
+          <p class="text-center">Do you really want to delete this {{deleteObj.name}}?</p>
+          <div class="text-center">
+            <div class="d-inline">
+              <button type="button" class="btn btn-secondary art-button" id="btn-admin-product-saveLruType" [disabled]="deleteObj.isDeleted" (click)="c('Save click');deleteObj.isError = false;">Close</button>
+            </div>
+            <div ngbAutofocus class="d-inline">
+              <button  id="btn-confirm-deleteModal" id="btn-admin-product-closeLruType"  class="btn btn-primary art-button ml-4" [disabled]="deleteObj.isDeleted" (click)="deleteConfirm(deleteObj)">
+                <i *ngIf="deleteObj.isDeleted" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  
+  </div>
+
+  <art-action-toolbar *ngIf="(getSelectedTabName == 'Details' || !getSelectedTabName)" [config]="productsObj.config" (actionToolBarEvent)="openDialogModal($event);"
+  [getSelectedRow]="selection.selected" (getSearchText)="productsSearch($event)"></art-action-toolbar>
+  <art-action-toolbar *ngIf="getSelectedTabName == 'Reasons of Removal'" [config]="productsObj.config" (actionToolBarEvent)="openDialogModal($event);"
+  [getSelectedRow]="removalSelection.selected" (getSearchText)="productsSearch($event)"></art-action-toolbar>
+  <art-action-toolbar *ngIf="getSelectedTabName == 'Repair Actions'" [config]="productsObj.config" (actionToolBarEvent)="openDialogModal($event);"
+  [getSelectedRow]="repairActionSelection.selected" (getSearchText)="productsSearch($event)"></art-action-toolbar>
+

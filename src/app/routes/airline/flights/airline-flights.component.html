@@ -1,0 +1,264 @@
+<div class="mt-3">
+
+  <art-updated-time time="{{updatedTime}}" isLoading="{{isLoading}}" (refreshClick)="getFlightList()"></art-updated-time>
+
+  <span class="float-right">
+    <art-date-picker [fromdate]="fromdates" [todate]="todates" (selectedDates)="getSelectedDates($event)"></art-date-picker>
+  </span>
+</div>
+<div class="mt-4">
+  <art-filter-button [filterData]="data" [datasource]="dataSource" (selectFilter)="getFilteredData($event)" [isloading]="isLoading"></art-filter-button>
+</div>
+<div class="mt-3">
+  <table mat-table #rsSort="matSort" id="tbl-airline-flight" [dataSource]="dataSource" matSort matSort matSortActive="arrivalDate"
+    matSortDirection="desc" class="col-12">
+
+    <!-- Checkbox Column -->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+      </th>
+      <td mat-cell *matCellDef="let row;let i = index">
+        <mat-checkbox [disableRipple]="true" (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null; getSelectedRows(selection.selected)"
+          [checked]="selection.isSelected(row)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <!-- Tail Sign Column -->
+    <ng-container matColumnDef="tailNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> TAIL # </th>
+      <td mat-cell *matCellDef="let element">
+        <a [routerLink]="['/airline', id, 'tails', element.tailNumber, 'flights']" class="lnk-tail-number">
+          {{element .tailNumber}}
+        </a>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="flightNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> FLIGHT # </th>
+      <td mat-cell *matCellDef="let element"> {{element.flightNumber}} </td>
+    </ng-container>
+
+
+
+    <ng-container matColumnDef="arrivalAirport">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> ORIGIN </th>
+      <td mat-cell *matCellDef="let element"> {{element .departureAirport}} </td>
+    </ng-container>
+
+    <!-- Destination Column -->
+    <ng-container matColumnDef="departureAirport">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> DESTINATION
+      </th>
+      <td mat-cell *matCellDef="let element"> {{element.arrivalAirport}} </td>
+    </ng-container>
+
+    <!-- departure date Column -->
+    <ng-container matColumnDef="departureDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> DEPARTURE TIME (UTC)
+      </th>
+      <td mat-cell *matCellDef="let element"> {{element.departureDate | date: 'MM/dd/yyyy HH:mm' : 'UTC'}} </td>
+    </ng-container>
+
+    <!-- Arrival Date  Column -->
+    <ng-container matColumnDef="arrivalDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        ARRIVAL TIME (UTC) </th>
+      <td mat-cell *matCellDef="let element"> {{element.arrivalDate | date: 'MM/dd/yyyy HH:mm' : 'UTC'}} </td>
+    </ng-container>
+
+    <!-- Offload Received  Column -->
+    <ng-container matColumnDef="isDarkFlight">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        DARK FLIGHT </th>
+      <td mat-cell *matCellDef="let element">
+
+        <span class="badge" [ngClass]="{
+            'badge-success':element.isDarkFlight === 'NO',
+            'badge-danger': element.isDarkFlight === 'YES',
+            'badge-secondary': element.isDarkFlight === 'N/A'
+            }">
+          {{element.isDarkFlight }}</span>
+
+        <!-- </mdb-badge>  -->
+      </td>
+    </ng-container>
+
+    <!-- Offload Received  Column -->
+    <ng-container matColumnDef="offloadReceived">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        OFFLOAD RECEIVED </th>
+      <td mat-cell *matCellDef="let element">
+
+        <span class="badge" [ngClass]="{
+            'badge-success':element.offloadReceived === 'YES',
+            'badge-danger': element.offloadReceived === 'NO'
+            }">
+          {{element.offloadReceived }}</span>
+
+        <!-- </mdb-badge>  -->
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row); getSelectedRows(selection.selected)"></tr>
+  </table>
+  <mat-card [hidden]="!isLoading" class="text-center">
+    Loading..
+  </mat-card>
+
+  <mat-card *ngIf="!isLoading && !dataSource.filteredData.length" class="text-center">
+    No Records Found..
+  </mat-card>
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+</div>
+
+<!-- Create Maintenance station -->
+<ng-template #editFlightModal let-c="close" let-d="dismiss" class="modal" id="mod-flightmodal">
+  <div>
+    <div class="modal-header">
+      <h6 class="w-100 modal-title text-center" ngbAutofocus>Edit Flight</h6>
+      <button type="button" [disabled]="flightObj.isFormSubmitted" class="close" aria-label="Close" (click)="d('Cross click');resetFormData();">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body modal-content-scroll">
+      <div *ngIf="!flightObj.isLoading">
+        <div class="alert alert-danger" *ngIf="flightObj.isError">
+          <a (click)='flightObj.isError = false' class="close" data-dismiss="alert">&times;</a>
+          <span *ngIf="flightObj.errorMsg">{{flightObj.errorMsg}}</span>
+        </div>
+
+        <art-section-title [sectionTitle]="['FLIGHT DETAILS']"></art-section-title>
+
+        <div class="row">
+          <div class="form-group col-3">
+            <art-label-value label='AIRLINE' value='{{flightObj.formObj.airline}}' id='lbl-airline'></art-label-value>
+          </div>
+          <div class="form-group col-3">
+            <art-label-value label='TAIL' value='{{flightObj.formObj.tail}}' id='lbl-tail'></art-label-value>
+          </div>
+          <div class="form-group col-6 p-0">
+            <art-label-value label='FLIGHT #' value='{{flightObj.formObj.flightNumber}}'  id='lbl-flight-no'></art-label-value>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-3">
+            <art-label-value label='ORIGIN' value='{{flightObj.formObj.departureAirport}}'  id='lbl-origin'></art-label-value>
+
+          </div>
+          <div class="form-group col-3">
+            <art-label-value label='DESTINATION' value='{{flightObj.formObj.arrivalAirport}}'  id='lbl-destination'></art-label-value>
+
+          </div>
+          <div class="form-group col-3  p-0">
+            <art-label-value label='DEPARTURE TIME (UTC)'  id='lbl-departure-time' [format]='labelValueFormat' value='{{flightObj.formObj.arrivalDate}}'></art-label-value>
+          </div>
+
+          <div class="form-group col-3">
+            <art-label-value label='ARRIVAL TIME (UTC)' id='lbl-arrival-time' [format]='labelValueFormat' value='{{flightObj.formObj.departureDate}}'></art-label-value>
+          </div>
+        </div>
+        <div class="p-1"></div>
+        <div>
+          <div class="row">
+            <label class="field col-12" id="lbl-dark-flight">DARK FLIGHT</label>
+            <mat-radio-group name="darkFlight" fxLayout="column" [(ngModel)]="flightObj.formObj.isDarkFlight">
+              <mat-radio-button [disableRipple]="false" *ngFor="let op of flightObj.darkFlightList" [value]="op.value"
+                [name]="op.name" class="removal-radio-btn p-3">
+                {{ op.name}}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </div>
+        <div class="clear-both p-2"></div>
+        <div class="dark-flight-details" *ngIf="flightObj.formObj.isDarkFlight == 'YES'">
+
+          <art-section-title [sectionTitle]="['DARK FLIGHT DETAILS']"></art-section-title>
+
+
+          <div class="row">
+            <div class="form-group col-4 d-inline-block">
+              <label id='lbl-open-date' class="mandatory-field">OPEN DATE (UTC)</label>
+              <div class="input-group">
+                <input autocomplete="off" id='inp-open-date' class="form-control" name="dp" [(ngModel)]="flightObj.formObj.openDate"
+                  ngbDatepicker #arrivalDate="ngbDatepicker">
+                <div class="input-group-append">
+                  <button id="btn-open-date" class="flight-calender btn btn-outline-secondary calendar" (click)="arrivalDate.toggle()"
+                    type="button">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="invalid-feedback d-inline" *ngIf="(flightObj.formSubmitted == true && !flightObj.formObj.openDate)">Open
+                  date is required</div>
+              </div>
+            </div>
+
+            <div class="form-group col-4 d-inline-block">
+              <label id='lbl-close-date'>CLOSE DATE (UTC)</label>
+              <div class="input-group">
+                <input autocomplete="off" id='inp-close-date' class="form-control" name="dp" [(ngModel)]="flightObj.formObj.closedDate"
+                  ngbDatepicker #departureDate="ngbDatepicker">
+                <div class="input-group-append">
+                  <button id="btn-close-date" class="flight-calender btn btn-outline-secondary calendar" (click)="departureDate.toggle()"
+                    type="button">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label id='lbl-squawk'>SQUAWK</label>
+            <input type="text" class="form-control" id="inp-squawk" [(ngModel)]="flightObj.formObj.squawk" />
+          </div>
+          <div class="form-group">
+            <label id='lbl-maintenance-action'>MAINTENANCE ACTION</label>
+            <input type="text" class="form-control" id="inp-maintenance-action" [(ngModel)]="flightObj.formObj.maintenaceAction" />
+          </div>
+          <div class="form-group">
+            <label id='lbl-description'>DESCRIPTION</label>
+            <input type="text" class="form-control" id="inp-description" [(ngModel)]="flightObj.formObj.description" />
+          </div>
+          <div class="p-3"></div>
+          <art-section-title [sectionTitle]="['ANALYSIS']"></art-section-title>
+
+
+
+          <div class="form-group">
+            <label id='lbl-root-cause'>ROOT CAUSE</label>
+            <input type="text" class="form-control" id="inp-root-cause" [(ngModel)]="flightObj.formObj.rootCause" />
+          </div>
+          <div class="form-group">
+            <label id='lbl-maintenance-engineering-notes'>MAINTENANCE RECOMMENDATION</label>
+            <input type="text" class="form-control" id="inp-maintenance-recommendation" [(ngModel)]="flightObj.formObj.maintenanceRecommendations" />
+          </div>
+          <div class="form-group">
+            <label id='lbl-engineering-notes'>ENGINEERING NOTES</label>
+            <input type="text" class="form-control" id="inp-engineering-notes" [(ngModel)]="flightObj.formObj.engineeringNotes" />
+          </div>
+        </div>
+      </div>
+      <div class="text-center" *ngIf="flightObj.isLoading">
+        <span>Loading...</span>
+      </div>
+    </div>
+
+    <div class="modal-footer form-group">
+      <button type="button" class="btn btn-secondary art-button" id="btn-flight-cancel" [disabled]="flightObj.isFormSubmitted"
+        (click)="c('Save click');resetFormData()">Cancel</button>
+      <button type="submit" class="btn btn-primary art-button" id="btn-flight-update" [disabled]="flightObj.isFormSubmitted || flightObj.isLoading"
+        (click)="updateFlightDetails()">
+        <i *ngIf="flightObj.isFormSubmitted" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+        Update Flight
+      </button>
+    </div>
+  </div>
+
+</ng-template>
+
+<art-action-toolbar [config]="actionToolBarConfig" [getSelectedRow]="selectedRowObj.selectedRow" (actionToolBarEvent)="getEvent($event);"
+  (getSearchText)="flightFilter($event)"></art-action-toolbar>

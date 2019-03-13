@@ -1,0 +1,7 @@
+$custom-typography: mat-typography-config(
+  $font-family: 'Roboto, monospace',
+  $body-1: mat-typography-level(13px, 13px, 500)
+);
+
+// Override the typography in the core CSS.
+@include mat-core($custom-typography);

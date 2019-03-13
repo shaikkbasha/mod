@@ -1,0 +1,281 @@
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.refresh-icon:hover {
+  color: $light-blue
+}
+
+
+/**
+Rotate th refresh Icon
+*/
+.refresh-icon-rotate {
+  -webkit-animation: infinite-spinning 1s ease-out 0s infinite normal;
+  animation: infinite-spinning 1s ease-out 0s infinite normal;
+}
+
+@keyframes infinite-spinning {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/***** Mandatory Field Asterisk Symbol *****/
+
+.mandatory-field::after {
+  content: "\00a0\00a0 ";
+  /* keeps spacing consistent */
+}
+
+.mandatory-field::after {
+  content: " *";
+  color: $red;
+}
+
+.invalid-feedback {
+  color: $red !important;
+}
+
+
+/***** Circles *****/
+.circle {
+  height: 12px;
+  width: 12px;
+  background-color: grey;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.circle-success {
+  background-color: $green;
+}
+
+.circle-warning {
+  background-color: $orange;
+}
+
+.circle-danger {
+  background-color: $red;
+}
+
+
+.chevron-arrow {
+  display: inline-block !important;
+  vertical-align: baseline !important;
+}
+
+.chevron-arrow::after {
+  font-family: FontAwesome !important;
+  font-size: 12px !important;
+  content: "\f107" !important;
+}
+
+
+.error-position {
+  margin: 10% 25% 0 25% !important;
+}
+
+.error-title {
+  color: $dark;
+}
+
+.error-description {
+  color: $dark-grey;
+}
+
+/** Tree Node **/
+.vertical-line {
+  border-right: 1px solid $pale-grey;
+}
+
+.light-blue {
+  background-color: $light-blue;
+}
+
+.color-white {
+  color: $white;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+/** Bootstrap Breadcrumb **/
+.product-breadcrumb-item+.product-breadcrumb-item::before {
+  content: ">" !important;
+}
+
+.product-breadcrumb {
+  background-color: $white !important;
+}
+
+.my-drop-zone {
+  border: dashed 3px $light-grey-01;
+  border-radius: 10px;
+  background-color: $light-grey-03;
+  height: 120px;
+  text-align: center;
+  padding: 20px;
+  max-height: 70px;
+  top: 50px;
+  margin-top: 10px;
+}
+
+.nv-file-over {
+  border: dashed 3px #5dbfd4;
+}
+
+.table-gap {
+  border-spacing: 0;
+  margin-top: 22px;
+}
+
+.progress {
+  display: flex;
+  height: 1rem;
+  overflow: hidden;
+  font-size: 0.75rem;
+  background-color: $light-blue-light !important;
+  border-radius: 0.25rem;
+}
+
+.table-progress {
+  background-color: $light-blue !important;
+  color: $white;
+}
+
+.coverage-icon:hover {
+  color: $blue-grey;
+}
+
+.home-icon {
+  color: $light-blue;
+}
+
+.plane-icon-rotate {
+  transform: rotate(-45deg);
+}
+
+/**
+Product Tab
+**/
+.removal-radio-btn .mat-ripple-element {
+  background-color: $dark-grey !important;
+}
+
+.removal-radio-btn .mat-radio-outer-circle {
+  border-color: $dark-grey !important;
+}
+
+.removal-radio-btn .mat-radio-inner-circle {
+  background-color: $dark-grey !important;
+}
+
+.multi-select-dropdown .dropdown-item.active {
+  @extend .table-progress;
+  color: $white !important;
+}
+
+.repair-type-radio-group .mat-radio-outer-circle {
+  border-color: $light-blue !important;
+}
+
+.repair-type-radio-group .mat-radio-button.mat-accent .mat-radio-inner-circle {
+  background-color: $light-blue !important;
+}
+
+.repair-removal-text-color {
+  color: $light-blue !important;
+}
+
+.hugeModal>.modal-dialog {
+  max-width: 70% !important;
+  width: 70% !important;
+}
+
+/*Open Layer Map*/
+.ol-attribution {
+  display: none !important;
+}
+
+/* Modal Window */
+.modal-content-scroll {
+  max-height: 65vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+/* vis timeline */
+.timeline-flightleg {
+  background-color: $thistle !important;
+  border-color: $thistle !important;
+}
+
+.vis-item-green {
+  border-color: $green !important;
+}
+
+.vis-item-red {
+  border-color: $red !important;
+}
+
+.ka-log-events {
+  background-color: $white !important;
+  // border-color: transparent !important;
+}
+
+.airline-stack {
+  vertical-align: top;
+  font-size: 15px;
+}
+
+.airline-stack-color {
+  color: $light-grey-01 !important;
+}
+
+.airline-stack-icon {
+  transform: rotate(-45deg);
+  color: $carbon-02 !important;
+}
+
+.airline-label {
+  margin: 0;
+  font-size: 13px !important;
+  font-weight: 900;
+  cursor: pointer;
+  color: $dark-grey;
+}
+
+.airline-label-inner {
+  float: left;
+  font-size: 10px;
+  color: $dark-grey;
+}
+
+.create-repair-datepicker .dropdown-menu .bg-primary {
+  background-color: $light-blue !important;
+}
+
+.create-repair-datepicker .dropdown-menu .btn-light:hover {
+  background-color: $blue-grey !important;
+}
+
+.tooltip-inner {
+  max-width: 300px !important;
+  text-align: left !important;
+
+  p {
+    margin: 0 !important;
+
+    span,
+    strong {
+      padding: 0 !important;
+    }
+  }
+}

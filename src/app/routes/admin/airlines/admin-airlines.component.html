@@ -1,0 +1,177 @@
+<div class="col-12">
+
+  <div class="mt-3">
+    <art-updated-time time="{{updatedTime}}" isLoading="{{isLoading}}" (refreshClick)="getAirlinesList()" ></art-updated-time>
+  </div>
+
+  <div>   
+    <table mat-table  id="tbl-admin-airlines" [dataSource]="dataSource"  matSort  matSortActive="name" matSortDirection="asc" class="col-12">
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox [disableRipple]="true" (click)="$event.stopPropagation()" (change)="selectedRow(selection.selected);$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>NAME </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+
+       <!-- acronym Column -->
+       <ng-container matColumnDef="acronym">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header >ACRONYM </th>
+          <td mat-cell *matCellDef="let element"> {{element.acronym}} </td>
+        </ng-container>
+        
+       <!-- ICAO Column -->
+       <ng-container matColumnDef="icao">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header >ICAO </th>
+          <td mat-cell *matCellDef="let element"> {{element.icao}} </td>
+        </ng-container>
+        <!-- IATA Column -->
+      <ng-container matColumnDef="iata">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header >IATA </th>
+          <td mat-cell *matCellDef="let element"> {{element.iata}} </td>
+        </ng-container>
+    
+      <!-- createdAt Column -->
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header >CREATED DATE (UTC) </th>
+        <td mat-cell *matCellDef="let element"> {{element.createdAt}} </td>
+      </ng-container>
+
+      <!-- updatedAt Column -->
+      <ng-container matColumnDef="updatedAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header >UPDATED DATE (UTC) </th>
+        <td mat-cell *matCellDef="let element"> {{element.updatedAt}} </td>
+      </ng-container>
+
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row);selectedRow(selection.selected);">
+      </tr>
+    </table>
+
+    <mat-card [hidden]="!isLoading" class="text-center">
+      Loading..
+    </mat-card>
+
+    <mat-card *ngIf="!isLoading && !dataSource.filteredData.length" class="text-center">
+      No Records Found..
+    </mat-card>
+
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+  </div>
+
+</div>
+
+<ng-template #airlineModal let-c="close" let-d="dismiss" class="modal" >
+  <div *ngIf="!airLineObj.enableDelete">
+  <div class="modal-header">
+    <h6 *ngIf="!airLineObj.formObj.value.id" class="w-100 modal-title text-center">Create Airline</h6>
+    <h6 *ngIf="airLineObj.formObj.value.id" class="w-100 modal-title text-center">Update Airline</h6>
+    <button type="button" [disabled]="airLineObj.isFormSubmitted" id="btn-arilines-close"class="close" aria-label="Close" (click)="d('Cross click');resetFormData();">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <form [formGroup]="airLineObj.formObj" (ngSubmit)="airlineFormSubmit()" >
+    <div class="modal-body">
+      <div class="alert alert-danger" *ngIf="airLineObj.formObj.isError">
+        <a (click)='airLineObj.formObj.isError = false' class="close" data-dismiss="alert">&times;</a>
+        <span *ngIf="airLineObj.formObj.errorMsg" id='error'>{{airLineObj.formObj.errorMsg}}</span>
+      </div>
+      <div class="form-group">
+        <label class="mandatory-field" id="lbl-admin-airline-name" >NAME</label>
+        <input type="text" id="inp-admin-airline-name" ngbAutofocus formControlName="name" autofocus class="form-control content-dark" [ngClass]="{ 'invalid-feedback d-inline': (airLineObj.formSubmitted || airLineObj.formObj.controls.name.dirty) && airLineObj.formObj.controls.name.errors }" />
+        <div *ngIf="airLineObj.formSubmitted && airLineObj.formObj.controls.name.errors" class="invalid-feedback d-inline">
+          <div *ngIf="airLineObj.formObj.controls.name.errors.required">Name is required</div>
+        </div>
+        <div *ngIf="airLineObj.formObj.controls.name.errors && airLineObj.formObj.controls.name.errors.maxlength" class="invalid-feedback d-inline">
+          Name must be below 60 characters
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-4">
+          <label class="mandatory-field" id="lbl-admin-airline-acronym">ACRONYM</label>
+          <input type="text"  id="inp-admin-airline-acronym" formControlName="acronym" class="form-control content-dark" [ngClass]="{ 'invalid-feedback d-inline': (airLineObj.formSubmitted || airLineObj.formObj.controls.acronym.dirty) && airLineObj.formObj.controls.acronym.errors }" />
+          <div *ngIf="airLineObj.formSubmitted && airLineObj.formObj.controls.acronym.errors" class="invalid-feedback d-inline">
+            <div *ngIf="airLineObj.formObj.controls.acronym.errors.required">Acronym is required</div>
+          </div>
+          <div *ngIf="airLineObj.formObj.controls.acronym.errors && airLineObj.formObj.controls.acronym.errors.maxlength" class="invalid-feedback d-inline">
+            Acronym must be below 5 characters
+          </div>
+        </div>
+        <div class="form-group col-4">
+          <label class="mandatory-field"  id="lbl-admin-airline-icao">ICAO</label>
+          <input type="text"   id="inp-admin-airline-icao" formControlName="icao" class="form-control content-dark" [ngClass]="{ 'invalid-feedback d-inline': (airLineObj.formSubmitted || airLineObj.formObj.controls.icao.dirty)  && airLineObj.formObj.controls.icao.errors }" />
+          <div *ngIf="airLineObj.formSubmitted && airLineObj.formObj.controls.icao.errors" class="invalid-feedback d-inline">
+            <div *ngIf="airLineObj.formObj.controls.icao.errors.required">ICAO is required</div>
+          </div>
+          <div *ngIf="airLineObj.formObj.controls.icao.errors && airLineObj.formObj.controls.icao.errors.maxlength" class="invalid-feedback d-inline">
+            ICAO must be below 3 characters
+          </div>
+        </div>
+        <div class="form-group col-4">
+          <label class="mandatory-field" id="lbl-admin-airline-iata" >IATA</label>
+          <input type="text" id="inp-admin-airline-iata" formControlName="iata" class="form-control content-dark" [ngClass]="{ 'invalid-feedback d-inline': (airLineObj.formSubmitted || airLineObj.formObj.controls.iata.dirty)  && airLineObj.formObj.controls.iata.errors }" />
+          <div *ngIf="airLineObj.formSubmitted && airLineObj.formObj.controls.iata.errors" class="invalid-feedback d-inline">
+            <div *ngIf="airLineObj.formObj.controls.iata.errors.required">IATA is required</div>
+          </div>
+          <div *ngIf="airLineObj.formObj.controls.iata.errors && airLineObj.formObj.controls.iata.errors.maxlength" class="invalid-feedback d-inline">
+            IATA must be or below 2 characters
+          </div>
+        </div>
+        </div>
+    </div>  
+
+    <div class="modal-footer form-group" >
+      <button type="button" class="btn btn-secondary art-button" [disabled]="airLineObj.isFormSubmitted" id="cancel"(click)="c('Save click');resetFormData();">Cancel</button>
+      <button *ngIf="!airLineObj.formObj.value.id" type="submit" class="btn btn-primary art-button" id="btn-airline-save"[disabled]="airLineObj.isFormSubmitted">
+        <i *ngIf="airLineObj.isFormSubmitted" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+        Save airline
+      </button>
+      <button *ngIf="airLineObj.formObj.value.id" type="submit"id="btn-airline-update" class="btn btn-primary art-button" [disabled]="airLineObj.isFormSubmitted">
+        <i *ngIf="airLineObj.isFormSubmitted" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+        Update airline
+      </button>
+    </div>
+  </form>
+  </div>
+  <!--- Delete Airline --->
+  <div  *ngIf="airLineObj.enableDelete">
+    <div class="modal-header">
+    <h6 class="modal-title w-100 text-center">Delete Airline</h6>
+    <button type="button" class="close" aria-label="Close" id="btn-airline-delete" (click)="d('Cross click');airLineObj.isError = false;" [disabled]="airLineObj.isDeleted">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    <div class="modal-body pt-md-4">
+    <div class="alert alert-danger" *ngIf="airLineObj.isError">
+      <a (click)='airLineObj.isError = false' class="close"  data-dismiss="alert">&times;</a>
+      <span *ngIf="airLineObj.errorMsg">{{airLineObj.errorMsg}}</span>
+    </div>
+    <p class="text-center">Do you really want to delete this airline?</p>
+    <div class="text-center">
+      <div class="d-inline">
+        <button type="button" class="btn btn-secondary art-button" id="btn-arilines-close" [disabled]="airLineObj.isDeleted" (click)="c('Save click');airLineObj.isError = false;">Close</button>
+      </div>
+      <div ngbAutofocus class="d-inline">
+        <button class="btn btn-primary art-button ml-4" [disabled]="airLineObj.isDeleted" id="btn-arilines-confirm" (click)="deleteAirline()">
+          <i *ngIf="airLineObj.isDeleted" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+  </div>
+</ng-template>
+
+<art-action-toolbar [config]="actionToolBarConfig" (actionToolBarEvent)="getEvent($event);" (getSearchText)="airlineFilter($event)" [getSelectedRow]="selection.selected" ></art-action-toolbar>
+

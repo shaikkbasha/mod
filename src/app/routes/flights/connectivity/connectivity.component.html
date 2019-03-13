@@ -1,0 +1,17 @@
+<art-flight-details [flightDetails]="flightDetails" [componentId]="['connectivity']" ></art-flight-details>
+
+<div class="clearfix p-3"></div>
+
+<art-section-title [sectionTitle]="['EVENTS TIMELINE']"></art-section-title>
+
+<div class="row">
+  <div *ngIf="isLoading" class="col-12 text-center">
+    Loading..
+  </div>
+  <div *ngIf="isError" class="col-12 text-center">
+      No Records Found..
+  </div>
+  <div [hidden]="isLoading" id="timeline" class="col-12" #timeline></div>
+</div>
+
+<art-action-toolbar [config]="actionToolBarConfig" (actionToolBarEvent)="getEvent($event);" (getSearchText)="antennaFilter($event)" [getSelectedRow]="selection.selected" ></art-action-toolbar>

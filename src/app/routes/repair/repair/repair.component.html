@@ -1,0 +1,28 @@
+<div class="object-header">
+  <div class="row p-4 text-center">
+    <div class="col-12" style="vertical-align: top">
+      <h6 style="display: inline">
+        <!--<img src="./assets/objects/admin.png" width="32px" height="32px" style="vertical-align: sub; margin-right: 5px">-->
+        <span class="fa-stack focus-object">
+          <i class="fa fa-circle fa-stack-2x focus-object-plate"></i>
+          <i class="fa fa-cog fa-stack-1x focus-object-plate-icon"></i>
+        </span>
+        Repair Management
+      </h6>
+    </div>
+  </div>
+  <div class="row text-center">
+    <div class="col-12">
+      <div class="btn-group" role="group" aria-label="Basic example">
+        <button type="button" id="btn-airline-link" class="btn btn-tab btn-sm btn-tab-m-w" [routerLink]="['/repairs', 'overview']" [class.active]="isActive(['repairs', 'overview'])">Overview</button>
+        <button type="button" id="btn-products-link" class="btn btn-tab btn-sm btn-tab-m-w" [routerLink]="['/repairs', 'removals']" [class.active]="isActive(['repairs','removals'])">Removals</button>
+        <button type="button" id="btn-products-link" class="btn btn-tab btn-sm btn-tab-m-w" [routerLink]="['/repairs', 'repairs']" [class.active]="isActive(['repairs','repairs'])">Repairs</button>
+        <button type="button" id="btn-airline-link" class="btn btn-tab btn-sm btn-tab-m-w" [routerLink]="['/repairs', 'reports']" [class.active]="isActive(['repairs', 'reports'])">Reports</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="content-area">
+  <router-outlet></router-outlet>
+</div>

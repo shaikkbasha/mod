@@ -1,0 +1,292 @@
+<div class="mt-3">
+  <art-updated-time time="{{updatedTime}}" isLoading="{{isLoading}}" (refreshClick)="getRemovalList()"></art-updated-time>
+</div>
+<span class="float-right">
+  <art-date-picker [fromdate]="datepickFromDate" [todate]="datepickToDate" (selectedDates)="getSelectedDates($event)"></art-date-picker>
+</span>
+<div>
+  <!-- repair-removal table-->
+  <table mat-table id="tbl-repair-removal" [dataSource]="dataSource" matSort matSortActive="name" matSortDirection="asc"
+    class="col-12">
+    <!-- lruPartNumber Column -->
+    <ng-container matColumnDef="urlPartNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>LRU PART NUMBER
+      </th>
+      <td mat-cell *matCellDef="let element"> {{element.urlPartNumber}} </td>
+    </ng-container>
+
+    <!-- serialNumber Column -->
+    <ng-container matColumnDef="serialNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>SERIAL NUMBER</th>
+      <td mat-cell *matCellDef="let element"> {{element.serialNumber}} </td>
+    </ng-container>
+
+    <!-- removalDate Column -->
+    <ng-container matColumnDef="removalDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> REMOVAL DATE (UTC)</th>
+      <td mat-cell *matCellDef="let element"> {{element.removalDate}} </td>
+    </ng-container>
+
+    <!-- maintenanceSation Column -->
+    <ng-container matColumnDef="maintenanceSation">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>MAINTENANCE STATION </th>
+      <td mat-cell *matCellDef="let element"> {{element.maintenanceSation}} </td>
+    </ng-container>
+
+    <!-- airline Column -->
+    <ng-container matColumnDef="airline">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>AIRLINE </th>
+      <td mat-cell *matCellDef="let element"> {{element.airline}} </td>
+    </ng-container>
+
+    <!-- Tail Column -->
+    <ng-container matColumnDef="tail">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>TAIL </th>
+      <td mat-cell *matCellDef="let element"> {{element.tail}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+    </tr>
+  </table>
+</div>
+
+
+<!--create repair modal-->
+
+<!--  <ng-template #removalModal let-c="close" let-d="dismiss" class="modal">
+  <div class="modal-header" ngbAutofocus>
+    <h6 class="w-100 modal-title text-center">Create Repair</h6>
+    <button type="button" [disabled]="removalModal.isFormSubmitted" id="btn-repair-removal-close" class="close"
+      aria-label="Close" (click)="d('Cross click');resetFormData();">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div> -->
+  <!--create repair modal form-->
+  <!-- <form [formGroup]="removalObj.formObj" (ngSubmit)="removalFormSubmit()">
+    <div class="modal-body" ngbAutofocus>
+      <div class="form-group">
+        <label id="lbl-repair-removal-name">REMOVAL INFORMATION</label>
+        <hr>
+      </div>
+      <div class="row">
+        <div class="form-group col-12">
+          <div class="input-group">
+            <input ngbAutofocus class="form-control content-dark" type="text" name="search" placeholder="Search serial number...">
+            <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-search" aria-hidden="true"></i><span>Go!</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footresetFormDataer form-group">
+      <div class=form-group>
+        <button type="buttonresetFormData" class="btn btn-secondary art-button repairBlack" id="btn-repair-removal-cancel"
+          [disabled]="removalModal.isFormSubmitted" (click)="c('Save cresetFormDatalick');resetFormData();">back</button>
+        <button type="submitresetFormData" class="btn btn-primary art-button createrepair-btn" id="btn-repair-removal-createremoval"
+          (click)="getRemovalModal()" [disabled]="removalModal.isFormSubmitted">Create Removal</button>
+        <button type="buttonresetFormData" class="btn btn-secondary art-button repairCancel" id="btn-repair-removal-cancel"
+          [disabled]="removalModal.isFormSubmitted" (click)="c('Save click');resetFormData();">Cancel</button>
+        <button type="submit" class="btn btn-primary art-button createnext-btn" id="btn-repair-removal-next" [disabled]="removalModal.isFormSubmitted">
+          Next
+        </button>
+      </div>
+    </div>
+  </form> 
+</ng-template>-->
+
+<!--create create removalrepair modal-->
+<!-- 
+<ng-template #createremovalModal let-c="close" let-d="dismiss" class="modal">
+  <div class="modal-header" ngbAutofocus>
+    <h6 class="w-100 modal-title text-center">Create Removal</h6>
+    <button type="button" [disabled]="createremovalModal.isFormSubmitted" id="btn-repair-createremoval-close" class="close"
+      aria-label="Close" (click)="d('Cross click');resetFormData();">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  create repair modal form-->
+
+  <!-- <form [formGroup]="createremovalObj.formObj" (ngSubmit)="removalFormSubmit()">
+    <div class="modal-body" ngbAutofocus>
+      <div class="row" ngbAutofocus>
+        <div class="form-group col-3">
+          <label class="mandatory-field" id="lbl-repair-removal-repairdate">REMOVAL DATE</label>
+          <mat-form-field class="repairDate">
+            <input matInput ngbAutofocus [matDatepicker]="RepairRemovalDate" class="form-control content-dark"
+              [formControl]="repairDate">
+            <mat-datepicker-toggle matSuffix [for]="RepairRemovalDate"></mat-datepicker-toggle>
+            <mat-datepicker #RepairRemovalDate></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="form-group col-3">
+          <label class="mandatory-field" id="lbl-repair-removal-repairstation">MAINTENANCE STATION</label>
+          <mat-form-field class="repairDateForm">
+            <mat-select placeholder="Select" [formControl]="maintenanceSation">
+              <mat-option>--</mat-option>
+              <mat-option *ngFor="let rep of repairs" [value]="rep">
+                {{rep.id}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-group col-3">
+          <label class="mandatory-field" id="lbl-repair-removal-techician">AIRLINE</label>
+          <mat-form-field class="repairDateForm">
+            <mat-select placeholder="Select" [formControl]="repairAiline">
+              <mat-option>--</mat-option>
+              <mat-option *ngFor="let rep of repairs" [value]="rep">
+                {{rep.id}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-group col-3" >
+          <label class="mandatory-field" id="lbl-repair-removal">TAIL</label>
+          <mat-form-field class="repairDateForm">
+            <mat-select placeholder="Select" [formControl]="repairTail">
+              <mat-option>--</mat-option>
+              <mat-option *ngFor="let rep of repairs" [value]="rep">
+                {{rep.id}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div> -->
+      <!--lru Part row-->
+
+    <!--  <div class="row" ngbAutofocus>
+        <div class="form-group col-3">
+          <label class="mandatory-field" id="lbl-repair-removal-repairstation">LRU Name</label>
+          <mat-form-field class="repairDateForm">
+            <mat-select placeholder="Select" [formControl]="repairControl">
+              <mat-option>--</mat-option>
+              <mat-option *ngFor="let rep of repairs" [value]="rep">
+                {{rep.id}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-group col-3">
+          <label class="mandatory-field" id="lbl-repair-removal-repairstation">LRU PART NUMBER</label>
+          <mat-form-field class="repairDateForm">
+            <mat-select placeholder="Select" [formControl]="repairControl">
+              <mat-option *ngFor="let rep of repairs" [value]="rep">
+                {{rep.id}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-group col-3">
+          <label class="mandatory-field" id="lbl-repair-removal-techician">REASON OF REMOVAL</label>
+          <mat-form-field class="repairDateForm">
+            <mat-select placeholder="Select" [formControl]="repairControl">
+              <mat-option *ngFor="let rep of repairs" [value]="rep">
+                {{rep.id}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-group col-3">
+          <label class="mandatory-field" id="lbl-repair-removal-other">OTHER</label>
+          <mat-form-field class="repairDateForm">
+            <mat-select placeholder="Select" [formControl]="repairControl">
+              <mat-option *ngFor="let rep of repairs" [value]="rep">
+                {{rep.id}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="form-group">
+        <div >
+        <label class="mandatory-field" id="lbl-repair-removal-lruserial">LRU SERIAL NUMBER</label>
+        <input type="text" id="inp-removal-lurserial-name" ngbAutofocus autofocus class="form-control content-dark lruSerial-input" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-3">
+          <label class="mandatory-field" id="lbl-repair-removal-resvision">RESVISION</label>
+          <mat-form-field class="repairDateForm">
+            <mat-select placeholder="Select" [formControl]="repairControl">
+              <mat-option *ngFor="let rep of repairs" [value]="rep">
+                {{rep.id}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-group col-8 mod">
+          <label class="mandatory-field" id="lbl-repair-removal-mod">MOD DOT IN</label>
+          <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+              <button type="button" class="btn btn-secondary">1</button>
+              <button type="button" class="btn btn-secondary">2</button>
+              <button type="button" class="btn btn-secondary">3</button>
+              <button type="button" class="btn btn-secondary">4</button>
+              <button type="button" class="btn btn-secondary">5</button>
+              <button type="button" class="btn btn-secondary">6</button>
+              <button type="button" class="btn btn-secondary">7</button>
+              <button type="button" class="btn btn-secondary">8</button>
+              <button type="button" class="btn btn-secondary">9</button>
+              <button type="button" class="btn btn-secondary">10</button>
+              <button type="button" class="btn btn-secondary">11</button>
+              <button type="button" class="btn btn-secondary">12</button>
+              <button type="button" class="btn btn-secondary">13</button>
+              <button type="button" class="btn btn-secondary">14</button>
+              <button type="button" class="btn btn-secondary">15</button>
+              <button type="button" class="btn btn-secondary">16</button>
+
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="row">
+          <div class="form-group col-3">
+            <mat-form-field class="repairDateForm">
+              <mat-select placeholder="Select" [formControl]="repairControl">
+                <mat-option *ngFor="let rep of repairs" [value]="rep">
+                  {{rep.id}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-group col-8 mod">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+              <div class="btn-group mr-2" role="group" aria-label="First group">
+                <button type="button" class="btn btn-secondary">17</button>
+                <button type="button" class="btn btn-secondary">18</button>
+                <button type="button" class="btn btn-secondary">19</button>
+                <button type="button" class="btn btn-secondary">20</button>
+                <button type="button" class="btn btn-secondary">21</button>
+                <button type="button" class="btn btn-secondary">22</button>
+                <button type="button" class="btn btn-secondary">23</button>
+                <button type="button" class="btn btn-secondary">24</button>
+                <button type="button" class="btn btn-secondary">25</button>
+                <button type="button" class="btn btn-secondary">26</button>
+                <button type="button" class="btn btn-secondary">27</button>
+                <button type="button" class="btn btn-secondary">28</button>
+                <button type="button" class="btn btn-secondary">29</button>
+                <button type="button" class="btn btn-secondary">30</button>
+                <button type="button" class="btn btn-secondary">31</button>
+                <button type="button" class="btn btn-secondary">32</button>
+
+              </div>
+            </div>
+  
+          </div>
+        </div>
+    </div>
+  </form> -->
+  <!--create createremoval modal footer-->
+
+  <!--<div class="modal-footer form-group">
+    <button type="button" class="btn btn-secondary art-button" id="btn-repair-createremoval-cancel" [disabled]="createremovalModal.isFormSubmitted"
+      (click)="c('Save click');resetFormData();">Cancel</button>
+    <button type="submit" class="btn btn-primary art-button" id="btn-repair-createremoval-saveremoval" [disabled]="createremovalModal.isFormSubmitted">
+      Save removal </button>
+  </div>
+</ng-template> -->
+<art-action-toolbar [config]="actionToolBarConfig" (actionToolBarEvent)="getEvent($event)"></art-action-toolbar>

@@ -1,0 +1,19 @@
+.badge {
+  height: 24px !important;
+  min-width: 50px !important;
+  border-radius: 6px !important;
+  line-height: 2 !important;
+  text-transform: uppercase;
+}
+
+.badge-danger {
+  background-color: $red !important;
+}
+
+.badge-success {
+  background-color: $green !important;
+}
+
+.badge-warning {
+  background-color: $orange !important;
+}

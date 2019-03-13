@@ -1,0 +1,5 @@
+---
+applications:
+- name: health-app-portal
+  command: node server.js
+---

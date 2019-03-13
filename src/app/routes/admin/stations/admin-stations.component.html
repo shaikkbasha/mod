@@ -1,0 +1,355 @@
+<div class="object-body col-12">
+    <div>
+      <mat-tab-group>
+        <mat-tab label="Maintenance Stations" >
+          <div>
+            <div class="mt-3">
+              <art-updated-time time="{{updatedTime}}" isLoading="{{isLoading}}" (refreshClick)="getMaintenanceStationsList()"></art-updated-time>
+            </div>
+            
+            <div class='mt-3'>
+              <table mat-table [dataSource]="dataSource" matSort matSortActive="fullName" id="tbl-admin-getMaintenanceStationsList" matSortDirection="asc" class="col-12">
+  
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="select">
+                  <th mat-header-cell *matHeaderCellDef>
+                  </th>
+                  <td mat-cell *matCellDef="let row;let i = index">
+                    <mat-checkbox [disableRipple]="true" (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null; selectedRow(selection.selected)"
+                      [checked]="selection.isSelected(row)">
+                    </mat-checkbox>
+                  </td>
+                </ng-container>
+  
+                <!-- fullName Column -->
+                <ng-container matColumnDef="fullName">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> STATION NAME </th>
+                  <td mat-cell *matCellDef="let element"> {{element.fullName}}</td>
+                </ng-container>
+  
+                <!-- shortName Column -->
+                <ng-container matColumnDef="shortName">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> SHORT NAME </th>
+                  <td mat-cell *matCellDef="let element"> {{element.shortName}} </td>
+                </ng-container>
+  
+                <!-- locationName Column -->
+                <ng-container matColumnDef="locationName">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> LOCATION NAME </th>
+                  <td mat-cell *matCellDef="let element"> {{element.locationName}} </td>
+                </ng-container>
+  
+                <!-- created date Column -->
+                <ng-container matColumnDef="createdDate">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> CREATED DATE (UTC)</th>
+                  <td mat-cell *matCellDef="let element"> {{element.createdAt | date: 'MM/dd/yyyy HH:mm'}} </td>
+                </ng-container>
+  
+                <!-- updated date Column -->
+                <ng-container matColumnDef="updatedDate">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header> UPDATED DATE (UTC)</th>
+                  <td mat-cell *matCellDef="let element"> {{element.updatedAt | date: 'MM/dd/yyyy HH:mm'}} </td>
+                </ng-container>
+  
+  
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row;let i = index; columns: displayedColumns;" (click)="selection.toggle(row); selectedRow(selection.selected)">
+                </tr>
+              </table>
+              <mat-card [hidden]="!isLoading" class="text-center">
+                Loading...
+              </mat-card>
+              <div *ngIf="!isLoading && !dataSource.filteredData.length" class="text-center">
+                No Records Found..
+              </div>
+              <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+            </div>
+  
+          </div>
+          <art-action-toolbar [config]="actionToolBarMStationConfig" (actionToolBarEvent)="getEvent($event);" (getSearchText)="maintenanceStationsFilter($event)"
+            [getSelectedRow]="selection.selected"></art-action-toolbar>
+        </mat-tab>
+        <mat-tab label="Repair Stations" id="lbl-admin-repairstation">
+          <div class="mt-3">
+            <art-updated-time time="{{repairStationsUpdatedTime}}" isLoading="{{loadingRepairStation}}" (refreshClick)="getRepairStationList()"></art-updated-time>
+          </div>
+  
+          
+          <div class='mt-3'>
+            <table mat-table #rsSort="matSort" id="tbl-admin-repairStationsDataSource-" [dataSource]="repairStationsDataSource" matSort matSortActive="fullName"
+              matSortDirection="asc" class="col-12">
+  
+              <!-- Checkbox Column -->
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+                </th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-checkbox [disableRipple]="true" (click)="$event.stopPropagation()" (change)="$event ? repairStationsSelection.toggle(row) : null; repairStationsSelectedRow(repairStationsSelection.selected)"
+                    [checked]="repairStationsSelection.isSelected(row)">
+                  </mat-checkbox>
+                </td>
+              </ng-container>
+              <!-- fullName Column -->
+              <ng-container matColumnDef="fullName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>STATION NAME </th>
+                <td mat-cell *matCellDef="let row"> {{row.fullName}} </td>
+              </ng-container>
+  
+              <!-- shortName Column -->
+              <ng-container matColumnDef="shortName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> SHORT NAME </th>
+                <td mat-cell *matCellDef="let row"> {{row.shortName}} </td>
+              </ng-container>
+  
+              <!-- locationName Column -->
+              <ng-container matColumnDef="locationName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> LOCATION NAME </th>
+                <td mat-cell *matCellDef="let row"> {{row.locationName}} </td>
+              </ng-container>
+  
+              <!-- created date Column -->
+              <ng-container matColumnDef="createdDate">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> CREATED DATE (UTC)</th>
+                <td mat-cell *matCellDef="let element"> {{element.createdAt | date: 'MM/dd/yyyy HH:mm'}} </td>
+              </ng-container>
+  
+              <!-- updated date Column -->
+              <ng-container matColumnDef="updatedDate">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> UPDATED DATE (UTC)</th>
+                <td mat-cell *matCellDef="let element"> {{element.updatedAt | date: 'MM/dd/yyyy HH:mm'}} </td>
+              </ng-container>
+  
+              <tr mat-header-row *matHeaderRowDef="repairStationsDisplayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: repairStationsDisplayedColumns;" (click)="repairStationsSelection.toggle(row); repairStationsSelectedRow(repairStationsSelection.selected)">
+              </tr>
+            </table>
+            <mat-card [hidden]="!loadingRepairStation" class="text-center">
+              Loading...
+            </mat-card>
+            <div *ngIf="!loadingRepairStation && !repairStationsDataSource.filteredData.length" class="text-center">
+              No Records Found..
+            </div>
+            <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+          </div>
+          <art-action-toolbar [config]="actionToolBarRStationConfig" (actionToolBarEvent)="getEvent($event);" (getSearchText)="repairStationsFilter($event)"
+          [getSelectedRow]="repairStationCommonObj.selectedRow"></art-action-toolbar>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  
+  </div>
+  
+  
+  <!-- Maintenance Station -->
+  <!-- Create Maintenance station -->
+  <ng-template #createUpdateMaintenanceStationForm let-c="close" let-d="dismiss" class="modal">
+    <div *ngIf="!maintenanceStationCommonObj.enableDelete">
+      <div class="modal-header">
+        <h6 *ngIf="!maintenanceStationsForm.value.id" class="w-100 modal-title text-center">Create Maintenance Station</h6>
+        <h6 *ngIf="maintenanceStationsForm.value.id" class="w-100 modal-title text-center">Update Maintenance Station</h6>
+        <button type="button" [disabled]="maintenanceStationCommonObj.isFormSubmitted" class="close" aria-label="Close"
+          (click)="d('Cross click');resetMaintenanceStationFormData();">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+  
+      <form [formGroup]="maintenanceStationsForm" (ngSubmit)="createUpdateMaintenanceStationsOnSubmit(errorHandling, d)">
+        <div class="modal-body">
+          <div class="alert alert-danger" *ngIf="maintenanceStationCommonObj.isError">
+            <a (click)='maintenanceStationCommonObj.isError = false' class="close" data-dismiss="alert">&times;</a>
+            <span *ngIf="maintenanceStationCommonObj.errorMsg">{{maintenanceStationCommonObj.errorMsg}}</span>
+          </div>
+          <div class="form-group">
+            <label class="mandatory-field" id="lbl-admin-station-fullName">STATION NAME</label>
+            <input type="text" id="inp-station-fullname" ngbAutofocus formControlName="fullName" autofocus class="form-control content-dark"
+              [ngClass]="{ 'invalid-feedback d-inline': (maintenanceStationCommonObj.formSubmitted || maintenanceStationsForm.controls.fullName.dirty) && maintenanceStationsForm.controls.fullName.errors }" />
+            <div *ngIf="maintenanceStationCommonObj.formSubmitted && maintenanceStationsForm.controls.fullName.errors"
+              class="invalid-feedback d-inline">
+              <div *ngIf="maintenanceStationsForm.controls.fullName.errors.required">Station Name is required</div>
+            </div>
+            <div *ngIf="maintenanceStationsForm.controls.fullName.errors && maintenanceStationsForm.controls.fullName.errors.maxlength"
+              class="invalid-feedback d-inline">
+              Station Name must be below 60 characters
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="mandatory-field" id="lbl-admin-station-shortName">SHORT NAME</label>
+            <input type="text"  id="inp-station-shortName"formControlName="shortName" class="form-control content-dark" [ngClass]="{ 'invalid-feedback d-inline': (maintenanceStationCommonObj.formSubmitted || maintenanceStationsForm.controls.shortName.dirty) && maintenanceStationsForm.controls.shortName.errors }" />
+            <div *ngIf="maintenanceStationCommonObj.formSubmitted && maintenanceStationsForm.controls.shortName.errors"
+              class="invalid-feedback d-inline">
+              <div *ngIf="maintenanceStationsForm.controls.shortName.errors.required">Short Name is required</div>
+            </div>
+            <div *ngIf="maintenanceStationsForm.controls.shortName.errors && maintenanceStationsForm.controls.shortName.errors.maxlength"
+              class="invalid-feedback d-inline">
+              Short Name must be below 60 characters
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="mandatory-field" id="lbl-admin-station-location">LOCATION NAME</label>
+            <input type="text"  id="inp-station-locationName" formControlName="locationName" class="form-control content-dark" [ngClass]="{ 'invalid-feedback d-inline': (maintenanceStationCommonObj.formSubmitted || maintenanceStationsForm.controls.locationName.dirty)  && maintenanceStationsForm.controls.locationName.errors }" />
+            <div *ngIf="maintenanceStationCommonObj.formSubmitted && maintenanceStationsForm.controls.locationName.errors"
+              class="invalid-feedback d-inline">
+              <div *ngIf="maintenanceStationsForm.controls.locationName.errors.required">Location Name is required</div>
+            </div>
+            <div *ngIf="maintenanceStationsForm.controls.locationName.errors && maintenanceStationsForm.controls.locationName.errors.maxlength"
+              class="invalid-feedback d-inline">
+              Location Name must be below 60 characters
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer form-group" *ngIf="!maintenanceStationsForm.value.id">
+          <button type="button" class="btn btn-secondary art-button" id="btn-admin-station-cancel" [disabled]="maintenanceStationCommonObj.isFormSubmitted"
+            (click)="c('Save click');resetMaintenanceStationFormData();">Cancel</button>
+          <button type="submit" class="btn btn-primary art-button" id="btn-admin-station-save"[disabled]="maintenanceStationCommonObj.isFormSubmitted">
+            <i *ngIf="maintenanceStationCommonObj.isFormSubmitted" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+            Save station
+          </button>
+        </div>
+  
+        <div class="modal-footer form-group" *ngIf="maintenanceStationsForm.value.id">
+          <button type="button" class="btn btn-secondary art-button" id="btn-maintenance-station-cancel" [disabled]="maintenanceStationCommonObj.isFormSubmitted"
+            (click)="c('Save click');resetMaintenanceStationFormData()" >Cancel</button>
+          <button type="submit" class="btn btn-primary art-button"  id="btn-maintenance-station-update" [disabled]="maintenanceStationCommonObj.isFormSubmitted">
+            <i *ngIf="maintenanceStationCommonObj.isFormSubmitted" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+            Update station
+          </button>
+        </div>
+      </form>
+    </div>
+  
+    <div *ngIf="maintenanceStationCommonObj.enableDelete">
+      <div class="modal-header">
+        <h6 class="modal-title w-100 text-center">Delete Station</h6>
+        <button type="button" class="close" aria-label="Close" id="btn-admin-station-delete" (click)="d('Cross click');maintenanceStationCommonObj.isError = false;"
+          [disabled]="maintenanceStationCommonObj.isDeleted">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body pt-md-4">
+        <div class="alert alert-danger" *ngIf="maintenanceStationCommonObj.isError">
+          <a (click)='maintenanceStationCommonObj.isError = false' class="close" data-dismiss="alert">&times;</a>
+          <span *ngIf="maintenanceStationCommonObj.errorMsg">{{maintenanceStationCommonObj.errorMsg}}</span>
+        </div>
+        <p class="text-center">Do you really want to delete this station?</p>
+        <div class="text-center">
+          <div class="d-inline">
+            <button type="button" class="btn btn-secondary art-button"  id="btn-admin-station-close"  [disabled]="maintenanceStationCommonObj.isDeleted"
+              (click)="c('Save click');maintenanceStationCommonObj.isError = false;">Close</button>
+          </div>
+          <div ngbAutofocus class="d-inline">
+            <button class="btn btn-primary art-button ml-4" [disabled]="maintenanceStationCommonObj.isDeleted"  id="btn-admin-station-confirm" (click)="deleteConfirmMaintenanceStations()">
+              <i *ngIf="maintenanceStationCommonObj.isDeleted" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  
+  <!-- Repair Station Section -->
+  <!-- Create/Update Repair Station -->
+  <ng-template #createUpdateRepairStationForm let-c="close" let-d="dismiss" class="modal">
+    <div *ngIf="!repairStationCommonObj.enableDelete">
+    <div class="modal-header">
+      <h6 *ngIf="!repairStationsForm.value.id" class="w-100 modal-title text-center">Create Repair Station</h6>
+      <h6 *ngIf="repairStationsForm.value.id" class="w-100 modal-title text-center">Update Repair Station</h6>
+      <button type="button" class="close" id="btn-admin-station-close"[disabled]="repairStationCommonObj.afterValidFormSubmitted" id="btn-admin-station-delete" aria-label="Close"
+        (click)="d('Cross click');resetRepairStationFormData();">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  
+    <!-- Create Form -->
+    <form [formGroup]="repairStationsForm" (ngSubmit)="createUpdateRepairStationsOnSubmit(errorHandling, d)">
+      <div class="modal-body">
+        <div class="alert alert-danger" *ngIf="repairStationCommonObj.isError">
+          <a (click)='repairStationCommonObj.isError = false' class="close" data-dismiss="alert">&times;</a>
+          <span *ngIf="repairStationCommonObj.errorMsg">{{repairStationCommonObj.errorMsg}}</span>
+        </div>
+        <div class="form-group">
+          <label class="mandatory-field">STATION NAME</label>
+          <input type="text"  id="inp-station-fullName"ngbAutofocus formControlName="fullName" class="form-control content-dark" [ngClass]="{ 'invalid-feedback d-inline': (repairStationCommonObj.beforeValidFormSubmitted || repairStationsForm.controls.fullName.dirty) && repairStationsForm.controls.fullName.errors }" />
+          <div *ngIf="repairStationCommonObj.beforeValidFormSubmitted && repairStationsForm.controls.fullName.errors"
+            class="invalid-feedback d-inline">
+            <div *ngIf="repairStationsForm.controls.fullName.errors.required">Station Name is required</div>
+          </div>
+          <div *ngIf="repairStationsForm.controls.fullName.errors && repairStationsForm.controls.fullName.errors.maxlength"
+            class="invalid-feedback d-inline">
+            Station Name must be below 60 characters
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="mandatory-field">SHORT NAME</label>
+          <input type="text"  id="inp-station-shortNames" formControlName="shortName" class="form-control content-dark" [ngClass]="{ 'invalid-feedback d-inline': (repairStationCommonObj.beforeValidFormSubmitted || repairStationsForm.controls.shortName.dirty) && repairStationsForm.controls.shortName.errors }" />
+          <div *ngIf="repairStationCommonObj.beforeValidFormSubmitted && repairStationsForm.controls.shortName.errors"
+            class="invalid-feedback d-inline">
+            <div *ngIf="repairStationsForm.controls.shortName.errors.required">Short Name is required</div>
+          </div>
+          <div *ngIf="repairStationsForm.controls.shortName.errors && repairStationsForm.controls.shortName.errors.maxlength"
+            class="invalid-feedback d-inline">
+            Short Name must be below 60 characters
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="mandatory-field">LOCATION NAME</label>
+          <input type="text" id="inp-station-locationName" formControlName="locationName" class="form-control content-dark" [ngClass]="{ 'invalid-feedback d-inline': (repairStationCommonObj.beforeValidFormSubmitted ||repairStationsForm.controls.locationName.dirty) && repairStationsForm.controls.locationName.errors }" />
+          <div *ngIf="repairStationCommonObj.beforeValidFormSubmitted && repairStationsForm.controls.locationName.errors"
+            class="invalid-feedback d-inline">
+            <div *ngIf="repairStationsForm.controls.locationName.errors.required">Location Name is required</div>
+          </div>
+          <div *ngIf="repairStationsForm.controls.locationName.errors && repairStationsForm.controls.locationName.errors.maxlength"
+            class="invalid-feedback d-inline">
+            Location Name must be below 60 characters
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer form-group" *ngIf="!repairStationsForm.value.id">
+        <button type="button" class="btn btn-secondary art-button"  id="btn-reparstation-cancel"(click)="c('Save click');resetRepairStationFormData();"
+          [disabled]="repairStationCommonObj.afterValidFormSubmitted">Cancel</button>
+        <button class="btn btn-primary art-button" id="btn-station-create" [disabled]="repairStationCommonObj.afterValidFormSubmitted">
+          <i *ngIf="repairStationCommonObj.afterValidFormSubmitted" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+          Create station
+        </button>
+      </div>
+  
+      <div class="modal-footer form-group" *ngIf="repairStationsForm.value.id">
+        <button type="button" [disabled]="repairStationCommonObj.afterValidFormSubmitted" id="btn-repairstation-cancel" class="btn btn-secondary art-button"
+          (click)="c('Save click');resetRepairStationFormData();">Cancel</button>
+        <button type="'submit" class="btn btn-primary art-button" id="btn-repairstation-update" [disabled]="repairStationCommonObj.afterValidFormSubmitted">
+          <i *ngIf="repairStationCommonObj.afterValidFormSubmitted" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+          Update station
+        </button>
+      </div>
+    </form>
+    </div>
+    <div *ngIf="repairStationCommonObj.enableDelete">
+        <div class="modal-header">
+          <h6 class="modal-title w-100 text-center">Delete Station</h6>
+          <button type="button" class="close" aria-label="Close" id="btn-repairstation-delete" (click)="d('Cross click');repairStationCommonObj.isError = false;"
+            [disabled]="repairStationCommonObj.isDeleted">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body  pt-md-4">
+          <div class="alert alert-danger" *ngIf="repairStationCommonObj.isError">
+            <a (click)='repairStationCommonObj.isError = false' class="close" data-dismiss="alert">&times;</a>
+            <span *ngIf="repairStationCommonObj.errorMsg">{{repairStationCommonObj.errorMsg}}</span>
+          </div>
+          <p class="text-center">Do you really want to delete this record?</p>
+          <div class="text-center">
+            <div class="d-inline">
+              <button type="button" class="btn btn-secondary art-button"  id="btn-repairstation-close"(click)="c('Save click');repairStationCommonObj.isError = false;"
+                [disabled]="repairStationCommonObj.isDeleted">Close</button>
+            </div>
+            <div ngbAutofocus class="d-inline">
+              <button class="btn btn-primary art-button ml-4" id="btn-repairstation-confirm" [disabled]="repairStationCommonObj.isDeleted" (click)="deleteConfirmRepairStations()">
+                <i *ngIf="repairStationCommonObj.isDeleted" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+        </div>
+  </ng-template>
+  

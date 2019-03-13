@@ -1,0 +1,19 @@
+<div >
+    <form (ngSubmit)="onSubmit()" [formGroup]="form" autocomplete="off">
+
+        <div class="modal-body">
+            <div *ngFor="let question of formConfig">
+                <app-form [question]="question" [formSubmitObj]="commonObj" [form]="form"></app-form>
+            </div>
+        </div>
+
+        <div class="modal-footer form-group">
+            <button type="button"  class="btn btn-secondary art-button"  [disabled]="configObj.isLoading"
+                (click)="cancelForm()">Cancel</button>
+            <button type="submit"  class="btn btn-primary art-button" [disabled]="configObj.isLoading">
+            <i *ngIf="configObj.isLoading" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+                {{formObj.saveButtonLabel}}
+            </button>            
+        </div>
+    </form>   
+</div>

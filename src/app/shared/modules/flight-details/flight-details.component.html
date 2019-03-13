@@ -1,0 +1,31 @@
+<art-section-title [sectionTitle]="['FLIGHT DETAILS']"></art-section-title>
+<div class="row mt-4">
+  <div *ngIf="flightDetails?.tailNumber" class="mb-2 {{colClass ? colClass : 'col-lg-2'}}">
+    <art-label-value id='lbl-{{componentId}}-tail' label='TAIL' value='{{flightDetails?.tailNumber}}'></art-label-value>
+  </div>
+  <div *ngIf="flightDetails?.flightNumber" class="mb-2 {{colClass ? colClass : 'col-lg-2'}}">
+    <art-label-value id='lbl-{{componentId}}-flight' label='FLIGHT #' value='{{flightDetails?.flightNumber}}'></art-label-value>
+  </div>
+  <div *ngIf="flightDetails?.departureAirport" class="mb-2 {{colClass ? colClass : 'col-lg-2'}}">
+    <art-label-value id='lbl-{{componentId}}-origin' label='ORIGIN' value='{{flightDetails?.departureAirport}}'></art-label-value>
+  </div>
+  <div *ngIf="flightDetails?.arrivalAirport" class="mb-2 {{colClass ? colClass : 'col-lg-2'}}">
+    <art-label-value id='lbl-{{componentId}}-destination' label='DESTINATION' value='{{flightDetails?.arrivalAirport}}'></art-label-value>
+  </div>
+  <div *ngIf="flightDetails?.departureTime" class="mb-2 {{colClass ? colClass : 'col-lg-2'}}">
+    <art-label-value id='lbl-{{componentId}}-departure-time' label='DEPARTURE TIME (UTC)' [format]="flightDetails?.dateFormat"
+      value='{{flightDetails?.departureTime}}'></art-label-value>
+  </div>
+  <div *ngIf="flightDetails?.arrivalTime" class="mb-2 {{colClass ? colClass : 'col-lg-2'}}">
+    <art-label-value id='lbl-{{componentId}}-arrival-time' label='ARRIVAL TIME (UTC)' [format]="flightDetails?.dateFormat"
+      value='{{flightDetails?.arrivalTime}}'></art-label-value>
+  </div>
+  <div *ngIf="flightDetails?.flightLegStartTime" class="mb-2 {{colClass ? colClass : 'col-lg-2'}}">
+    <art-label-value id='lbl-{{componentId}}-departure-time' label='FLIGHT LEG START TIME (UTC)' [format]="flightDetails?.dateFormat"
+      value='{{flightDetails?.flightLegStartTime}}'></art-label-value>
+  </div>
+  <div *ngIf="flightDetails?.flightLegEndTime" class="mb-2 {{colClass ? colClass : 'col-lg-2'}}">
+    <art-label-value id='lbl-{{componentId}}-arrival-time' label='FLIGHT LEG END TIME (UTC)' [format]="flightDetails?.dateFormat"
+      value='{{flightDetails?.flightLegEndTime}}'></art-label-value>
+  </div>
+</div>

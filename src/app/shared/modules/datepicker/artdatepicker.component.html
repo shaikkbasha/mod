@@ -1,0 +1,18 @@
+<div >
+
+  <a class="cursor-pointer date-range-picker-color" >
+    <i class='fa fa-calendar mr-1' (click)="d.toggle()"></i>
+    <span (click)="d.toggle()"> {{ selectedFromDate | date:'MMMM'}} {{ selectedFromDate | date:'d'}} - {{ selectedToDate | date:'MMMM'}} {{ selectedToDate | date:'d'}}</span>
+    <input placement="bottom-right" class="date-range-picker"  (dateSelect)="onDateSelection($event, d)" outsideDays="hidden"  [displayMonths]="2" [dayTemplate]="t"
+         name="dp" ngbDatepicker #d="ngbDatepicker" (click)="d.toggle()" [autoClose]="false" /></a>
+
+  <ng-template #t let-date >
+    <span class="custom-day"
+          [class.range]="isRange(date)"
+          [class.faded]="isHovered(date) || isInside(date)"
+          (mouseenter)="hoveredDate = date"
+          (mouseleave)="hoveredDate = null">
+      {{ date.day }}
+    </span>
+  </ng-template>
+</div>

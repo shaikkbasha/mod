@@ -1,0 +1,56 @@
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+
+// below defines your custom color to build a theme palette from
+$thales-light-blue-mat: (
+  50: #5dbfd4,
+  100: #5dbfd4,
+  200: #5dbfd4,
+  300: #5dbfd4,
+  400: #5dbfd4,
+  500: #5dbfd4,
+  600: #5dbfd4,
+  700: #5dbfd4,
+  800: #5dbfd4,
+  900: #5dbfd4,
+  A100: #5dbfd4,
+  A200: #5dbfd4,
+  A400: #5dbfd4,
+  A700: #5dbfd4,
+  contrast: (
+    50: white,
+    100: white,
+    200: white,
+    300: white,
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: white,
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$artefact-app-primary: mat-palette($thales-light-blue-mat);
+$artefact-app-accent:  mat-palette($mat-pink, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$artefact-app-warn:    mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$artefact-app-theme: mat-light-theme($artefact-app-primary, $artefact-app-accent, $artefact-app-warn);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($artefact-app-theme);

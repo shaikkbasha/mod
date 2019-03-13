@@ -1,0 +1,23 @@
+label {
+  font-size: 10px !important;
+  color: $dark-grey !important;
+}
+
+.form-control {
+  font-size: 13px !important;
+  border-color:$pale-grey !important;
+}
+
+.form-control:focus {
+  border-color: $light-blue !important;
+}
+
+
+/***** Mandatory Field Form Validation *****/
+
+.invalid-feedback{
+  border-color: $red !important;
+}
+.has-danger, .has-danger:focus{
+  border-color: $red !important;
+}

@@ -1,0 +1,25 @@
+<nav id="header-nav-bar" class="navbar header">
+  <a class="navbar-brand" [routerLink]="['/home']">
+    <i class="fa fa-cloud"></i>
+  </a>
+  <nav class="my-2 my-md-0 mr-md-3">
+    <span *ngIf="displayFullTime" class="normal-text d-xs-none">
+      {{ currentDateTime | date: 'E MMM d, H:mm:ss z'}}
+      <span style="color: darkgray !important">(LOCAL)</span>
+      &nbsp;&nbsp;&#8226;&nbsp;&nbsp;{{ currentDateTime |
+      date: 'E MMM d, HH:mm:ss' : 'UTC'}}
+      <span style="color: darkgray !important">(UTC)</span>
+    </span>
+    <span *ngIf="!displayFullTime">
+      <i class="fa  fa-fw fa-clock-o" data-placement="bottom"
+         ngbTooltip="{{ currentDateTime | date: 'E MMM d, H:mm:ss z'}} (LOCAL) &#8226; {{ currentDateTime | date: 'E MMM d, HH:mm:ss' : 'UTC'}} (UTC)"></i>
+    </span>
+    <span class="m-2" style="color: #c2c6c9 !important;">|</span>
+    <a *userHasAnyAuthority="'admins'" class="p-2" [routerLink]="['/admin']"><i class="fa fa-cog"></i></a>
+    <a class="p-2" [routerLink]="['/upload']"><i class="fa fa-fw fa-cloud-upload"></i></a>
+    <a class="p-2"><i class="fa fa-fw fa-search"></i></a>
+    <a class="p-2" (click)="displayCustomToast()"><i class="fa fa-fw fa-bell"></i></a>
+    <a class="p-2" [routerLink]="['/profile']"><i class="fa fa-fw fa-user-circle"></i></a>
+    <a class="p-2" href="" (click)="logout()" id='logout'><i class="fa fa-fw  fa-sign-out"></i></a>
+  </nav>
+</nav>

@@ -1,0 +1,25 @@
+/*KPI Card*/
+.card {
+    height: 360px !important;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
+    background-color: $white;
+    border-radius: 0 !important;
+    .card-header {
+      color: $white;
+      line-height: 1;
+      font-size: 13px;
+      background-color: $carbon-02;
+      border-radius: 0 !important;
+      .card-title {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .updated-time {
+        opacity: 0.66;
+        float: right;
+      }
+    }
+    .card-body {
+        padding: 18px !important;
+    }
+  }

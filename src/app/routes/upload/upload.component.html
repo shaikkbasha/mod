@@ -1,0 +1,150 @@
+<div class="content-area">
+<div class="mt-3">
+
+
+    <input multiple #uploaderInput id="inp-uploader-input" type="file" ng2FileSelect [uploader]="uploader" style="display: none;"
+        (change)="onSearchChange('')" />
+
+
+    <!-- {{uploader.queue | json}} -->
+    <!-- <table class="col-12 mat-table">
+
+        <thead>
+
+            <tr class="mat-header-row">
+
+                <th class="mat-header-cell" style="width: 50%;">FILE NAME</th>
+
+                <th class="mat-header-cell " style="width: 10%;">FILE SIZE</th>
+
+                <th class="mat-header-cell" style="width: 15%;">PROGRESS</th>
+
+                <th class="mat-header-cell" style="width: 10%;">STATUS</th>
+
+                <th class="mat-header-cell" style="width: 15%;">ACTIONS</th>
+
+            </tr>
+
+        </thead>
+
+        
+        <tbody>
+
+            <tr *ngFor="let item of uploader.queue" class="mat-row">
+                <td class="mat-cell text-left"><strong>{{ item?.file?.name }}</strong></td>
+
+                <td class="mat-cell text-left" *ngIf="uploader.options.isHTML5" nowrap>{{ item?.file?.size |
+                   bytes:1 }} </td>
+                <td *ngIf="uploader.options.isHTML5" class="mat-cell text-left pr-2">
+                    <div class=" text-left progress">
+                        <div class="progress-bar progress-bar-info  toolbar-search-icon" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }">
+                            {{item.progress }}%
+                        </div>
+                    </div>
+
+                </td>
+                <td class="text-left">
+                    <span class="badge badge-success" *ngIf="item.isSuccess">Success</span>
+
+                    <span class="badge badge-danger" *ngIf="item.isCancel">Cancel</span>
+
+                    <span class="badge badge-danger" *ngIf="item.isError">Error</span>
+
+                    <span class="badge badge-info" *ngIf=" item.isUploading">Uploading</span>
+
+
+
+                </td>
+
+                <td nowrap class="text-left cursor-pointer">
+
+                    <i class="fa fa-upload px-1 toolbar-search-icon" (click)="item.upload(item)" title="Upload" *ngIf="!item.isReady || !item.isUploading || !item.isSuccess"
+                        >
+                    </i>
+
+                    <i class="fa fa-ban px-1 toolbar-search-icon" (click)="item.cancel(item)" title="Cancel" *ngIf="item.isUploading">
+                    </i>
+                    <i class="fa fa-trash px-1 toolbar-search-icon" (click)="item.remove(item)" title="Remove"></i>
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table> -->
+    <div class="row">
+
+        <div class="col-md-12">
+            <div>OFFLOADS DROPZONE</div>
+            <div ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}" (fileOver)="fileOverBase($event)"
+                [uploader]="uploader" class="well my-drop-zone">
+                   Drag files here...
+            </div>
+
+
+        </div>
+
+
+
+        <table mat-table  id="tbl-payloads-upload" [dataSource]="dataSource" class="col-12 table-gap" >
+
+
+            <ng-container matColumnDef="fileName">
+                <th mat-header-cell *matHeaderCellDef> FILE NAME </th>
+                <td mat-cell *matCellDef="let element"> {{ element.fileName }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fileSize">
+                <th mat-header-cell *matHeaderCellDef> FILE SIZE </th>
+                <td mat-cell *matCellDef="let element"> {{ element.fileSize | bytes :1}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fileProgress">
+                <th mat-header-cell *matHeaderCellDef> PROGRESS </th>
+                <td mat-cell *matCellDef="let element">
+                    <div class="progress mr-3">
+                        <div class="custom-day focused progress progress-bar-info p-0 table-progress" role="progressbar" [ngStyle]="{ 'width': element.fileProgress + '%' }">
+                            {{element.fileProgress }}%
+                        </div>
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fileStatus">
+                <th mat-header-cell *matHeaderCellDef>STATUS</th>
+                <td mat-cell *matCellDef="let element"> <span class="badge" [ngClass]="{
+                                'badge-success':element.fileStatus=== 'Success',
+                                'badge-danger': (element.fileStatus=== 'Cancel' || element.fileStatus === 'Error'),
+                                'badge-info' : element.fileStatus === 'Uploading'
+                                }"
+                        ngbTooltip="{{responseStr}}" title="{{responseStr}}"> {{element.fileStatus}}</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fileReady">
+                <th mat-header-cell *matHeaderCellDef>ACTION</th>
+                <td mat-cell *matCellDef="let element">
+                    <i class="fa fa-upload px-1 toolbar-search-icon cursor-pointer" (click)="element.fileEvents.upload(element.fileEvents)"
+                        title="Upload" *ngIf="!element.fileEvents.isReady || !element.fileEvents.isUploading || !element.fileEvents.isSuccess">
+                    </i>
+
+                    <i class="fa fa-ban px-1 toolbar-search-icon cursor-pointer" (click)="element.fileEvents.cancel(element.fileEvents)"
+                        title="Cancel" *ngIf="element.fileEvents.isUploading">
+                    </i>
+                    <i class="fa fa-trash px-1 toolbar-search-icon cursor-pointer" (click)="element.fileEvents.remove(element.fileEvents);clearData(element.fileEvents.file?.name);"
+                        title="Remove"></i>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+
+
+
+
+    </div>
+
+</div>
+    <art-action-toolbar [config]="actionToolBarConfig" (actionToolBarEvent)="getEvent($event);" [getSelectedRow]="uploader.queue"></art-action-toolbar>

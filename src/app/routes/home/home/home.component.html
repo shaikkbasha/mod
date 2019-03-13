@@ -1,0 +1,97 @@
+<div class="content-area">
+  <h4 id="home-welcome-title" *ngIf="isUserAuthenticated && userDetails">Welcome, {{ userDetails.firstName }}!</h4>
+  <hr><br>
+  <span>
+    <div class="container">
+      <div class="row">
+
+        <div class="col-6 col-sm-4 col-md-3 col-xl-2 text-center">
+          <a id="lnk-home-upload" [routerLink]="['/upload']">
+            <span class="fa-stack fa-4x home-icon" id="spn-home-upload">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa fa-cloud-upload fa-stack-1x fa-inverse"></i>
+            </span>
+          </a>
+          <div class="container">
+            <label id="lbl-upload">
+              UPLOAD
+            </label>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-3 col-xl-2 text-center">
+          <a id="lnk-home-reparis" [routerLink]="['/repairs']">
+            <span class="fa-stack fa-4x home-icon" id="spn-home-repairs">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa fa-wrench fa-stack-1x fa-inverse"></i>
+            </span>
+          </a>
+          <div class="container">
+            <label id="lbl-repairs">
+              REPAIRS
+            </label>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-3 col-xl-2 text-center">
+          <a id="lnk-home-profile" [routerLink]="['/profile']">
+            <span class="fa-stack fa-4x home-icon" id="spn-home-profile">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa fa-user fa-stack-1x fa-inverse"></i>
+            </span>
+          </a>
+          <div class="container">
+            <label id="lbl-profile">
+              PROFILE
+            </label>
+          </div>
+        </div>
+        <div class="col-6 col-sm-4 col-md-3 col-xl-2 text-center" *userHasAnyAuthority="'admins'">
+          <a id="lnk-home-admin"  [routerLink]="['/admin']">
+            <span class="fa-stack fa-4x home-icon" id="spn-home-admin">
+              <i class="fa fa-circle fa-stack-2x"></i>
+              <i class="fa fa-gear fa-stack-1x fa-inverse"></i>
+            </span>
+          </a>
+          <div class="container">
+            <label id="lbl-admin">
+              ADMIN
+            </label>
+          </div>
+        </div>
+
+
+
+
+
+      </div>
+    </div>
+
+    <div>
+      <art-section-title [sectionTitle]="['MY AIRLINES']"></art-section-title>
+      <div class="container">
+        <div class="row">
+
+          <div *ngFor="let airline of airlineList; let i = index" class="col-6 col-sm-4 col-md-3 col-xl-3 mt-2 mb-3 p-0">
+            <a class="d-inline-block airline-parent" id="lnk-home-airline-{{airline.icao}}" [routerLink]="['/airline', airline.icao]">
+              <span class="fa-stack airline-stack mt-3">
+                <i class="fa fa-circle fa-stack-2x airline-stack-color">
+                </i>
+                <i class="fa fa-plane fa-stack-1x fa-inverse content-dark airline-stack-icon"></i></span>
+
+              <div class="pl-2 d-inline-block">
+                <span class="airline-label">
+                  {{airline.name}}
+                </span>
+                <br><span class="airline-label-inner"> {{ airline.icao }}</span></div>
+            </a>
+          </div>
+          <div *ngIf="(!airlineList || (airlineList && !airlineList.length)) && (!isLoading)">
+              <span>No Arlines Found</span>
+          </div>
+          <div *ngIf="isLoading">
+            <span>Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </span>
+</div>

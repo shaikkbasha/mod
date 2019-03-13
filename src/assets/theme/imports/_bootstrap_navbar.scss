@@ -1,0 +1,67 @@
+.navbar-brand {
+  color: white !important;
+  width: 36px !important;
+  height: 36px !important;
+  text-align: center !important;
+}
+
+/* Mobile Devices */
+@media (max-width: 414px) {
+  height: 72px !important;
+}
+
+#header-nav-bar {
+  padding: 0rem 1rem !important;
+}
+
+.navbar-brand:hover {
+  background-color: $carbon-03 !important;
+}
+
+.navbar-brand:active {
+  background-color: $light-blue !important;
+}
+
+.navbar-nav .dropdown {
+  height: 36px !important;
+}
+
+.navbar-nav .dropdown:hover {
+  background-color: $carbon-03 !important;
+}
+
+.navbar-nav .dropdown:active {
+  background-color: $light-blue !important;
+}
+
+.nav-link {
+  color: white !important;
+  height: 36px !important;
+}
+
+.nav-link-glyph {
+  color: white !important;
+  width: 36px !important;
+  height: 36px !important;
+  text-align: center !important;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: $carbon-03 !important;
+}
+
+.navbar-nav .nav-link:active {
+  background-color: $light-blue !important;
+}
+
+nav > a {
+  color: white !important;
+}
+
+nav > a:hover {
+  background-color: $carbon-03 !important;
+}
+
+nav> a:active {
+  background-color: $light-blue !important;
+}

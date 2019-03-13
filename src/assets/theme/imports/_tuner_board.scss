@@ -1,0 +1,106 @@
+/**board tuner customization**/
+.border-tuner-filter {
+  margin-left:0 !important;
+  margin-right:0 !important;
+  padding: 0 !important;
+  div {
+    padding: 0;
+    .btn-group {
+      padding: 10px;
+      label {
+        border-color: $dark !important;
+        background-color: $light-grey-02 !important;
+        &:hover:not(.active):not(.active-mouse-down):not(.inactive-mouse-down) {
+          background-color: $light-grey-01 !important;
+        }
+        &.active {
+          color: $white !important;
+          background-color: $light-blue !important;
+        }
+        &.active {
+          background-color: $light-blue !important;
+        }
+        &.active:hover {
+          background-color: $blue-grey !important;
+        }
+        &.active-mouse-down{
+          color: $white !important;
+          background-color: $dark-grey !important;
+        }
+        &.inactive-mouse-down:not(.active) {
+          color: $white !important;
+          background-color: $light-blue !important;
+        }
+      }
+    }
+  }
+
+}
+
+/**tuner parameter drop-down**/
+.tuner-param-filter {
+  margin-left:0 !important;
+  margin-right:0 !important;
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    outline: 0;
+    box-shadow: none;
+    border: 0 !important;
+    background: $white;
+    background-image: none;
+  }
+
+  .custom-drop-down {
+    position: relative;
+    display: block;
+    width: 12em;
+    height: 2em;
+    line-height: 1.5;
+    background: $white;
+    overflow: hidden;
+    border-radius: 5px;
+    border: 1px solid $medium-grey;
+    padding: 0 !important;
+    margin-bottom: 0.5rem;
+  }
+
+  select {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0 0 0 .5em;
+    color: $dark-grey;
+    cursor: pointer;
+    &::-ms-expand {
+      display: none;
+    }
+  }
+
+  .custom-drop-down {
+    &::after {
+      content: '\25BC';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      padding: 0.2em 0.5em;
+      background: $light-blue;
+      pointer-events: none;
+      color: #fff;
+    }
+    &::after {
+      -webkit-transition: .25s all ease;
+      -o-transition: .25s all ease;
+      transition: .25s all ease;
+    }
+  }
+
+}
+
+.tv-sticky-mat-table {
+  height: 964px !important;
+  overflow: auto;
+}

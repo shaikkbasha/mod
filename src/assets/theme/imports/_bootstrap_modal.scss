@@ -1,0 +1,34 @@
+.modal-content {
+  border-radius: 0px !important;
+}
+
+.modal-header {
+  background-color: $light-grey-03 !important;
+  color: $dark !important;
+  border: none !important;
+}
+
+.modal-body {
+  padding-top: 48px !important;
+  padding-right: 48px !important;
+  padding-bottom: 24px !important;
+  padding-left: 48px !important;
+}
+
+.modal-footer {
+  background-color: $light-grey-04 !important;
+  border: none !important;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1) !important;
+  padding-top: 24px !important;
+  padding-right: 48px !important;
+  padding-bottom: 24px !important;
+  padding-left: 48px !important;
+}
+
+.modal-footer.form-group {
+  margin-bottom: 0px !important;
+}
+
+.content-dark {
+  color: $dark !important;
+}

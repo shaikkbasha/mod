@@ -1,0 +1,26 @@
+<div class="content-area">
+  <!-- START row-->
+  <div class="row mt-2">
+    <div class="col-xl-12">
+      <div class="card b">
+        <div class="card-body">
+          <table class="ui table" id="tbl-profile">
+            <thead>
+            <tr>
+              <th>Claim</th>
+              <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let claim of claims">
+              <td>{{claim.claim}}</td>
+              <td id="claim-{{claim.claim}}">{{claim.value}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END row-->
+</div>

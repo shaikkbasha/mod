@@ -1,0 +1,18 @@
+<div>
+  <div class="row m-0">
+    <div [ngClass]="{'filter-button-color' : (activeWidgetObj.activeWidget == i) ||(activeWidgetObj.isPressed == i),'filter-button-default-color': (activeWidgetObj.activeWidget != i && activeWidgetObj.isPressed != i), 'hover-activated-filter-button': (activeWidgetObj.activeWidget == i && activeWidgetObj.isHovered
+     == activeWidgetObj.activeWidget), 'selected-filter-button': (activeWidgetObj.activeWidget == i && activeWidgetObj.changeActivatedWidgetStyle == i),'selected-filter-button':(activeWidgetObj.activeWidget == i && activeWidgetObj.isPressed == activeWidgetObj.activeWidget)}"  
+     class="cursor-pointer filter-button col-3" (click)="getActiveWidget(i, item)" 
+     *ngFor="let item of filterData; let i = index" (mouseover)="activeWidgetObj.isHovered = i" 
+     (mouseleave)="activeWidgetObj.isHovered = null;activeWidgetObj.changeActivatedWidgetStyle = null" 
+     (mousedown)="activeWidgetObj.isPressed = i" (mouseup)="activeWidgetObj.isPressed = null;activeWidgetObj.changeActivatedWidgetStyle = null"
+     id="{{item.filterValue}}-filter-btn">
+      <p [ngClass]="{'filter-button-title text-uppercase ': activeWidgetObj.activeWidget == i,'filter-button-title-color text-uppercase':activeWidgetObj.activeWidget != i }">{{item.title}}</p>
+      <h3>
+        <span *ngIf="(loadingStatus || item.count == null);then content else count_content"></span>
+        <ng-template #content>-</ng-template>
+        <ng-template #count_content>{{item.count}}</ng-template>
+      </h3>
+    </div>
+  </div>
+</div>

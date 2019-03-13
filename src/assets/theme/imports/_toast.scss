@@ -1,0 +1,58 @@
+.toast-container .toast {
+  background-color: white !important;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
+}
+
+.toast-container .toast:hover {
+  box-shadow: 0 0 21px 0 rgba(0, 0, 0, 0.2);
+}
+
+.toast-container .toast:active {
+  box-shadow: 0 0 21px 0 rgba(0, 0, 0, 0.3);
+}
+
+.toast-title {
+  color: $dark !important;
+  font-size: 13px !important;
+}
+
+.toast-message {
+  color: $dark-grey !important;
+  font-size: 10px !important;
+}
+
+.toast-close-button {
+  color: $medium-grey !important;
+}
+
+
+#toast-container > .toast-error {
+  background: url("/assets/img/toast/toast-error.png") 10px 50% no-repeat;
+}
+
+#toast-container > .toast-info {
+  background: url("/assets/img/toast/toast-info.png") 10px 50% no-repeat;
+}
+
+#toast-container > .toast-success {
+  background: url("/assets/img/toast/toast-success.png") 10px 50% no-repeat;
+}
+
+#toast-container > .toast-warning {
+  background: url("/assets/img/toast/toast-warning.png") 10px 50% no-repeat;
+}
+
+
+// Full custom toast
+
+/*
+Note: the Angular code to call above custom toast is as follows (replace class name accordingly!):
+
+    this.toaster.show(msg, title, null, 'toast-error-plane');
+
+*/
+
+#toast-container > .toast-error-plane {
+  background: url("/assets/img/toast/toast-error-plane.png") 10px 50% no-repeat;
+  background-size: 32px 32px;
+}

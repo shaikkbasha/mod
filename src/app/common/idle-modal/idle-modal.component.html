@@ -1,0 +1,14 @@
+<div class="modal-header">
+  <div class="col-12" ngbAutofocus>
+    <h6 class="modal-title text-center">Time out warning</h6>
+  </div>
+</div>
+<div class="modal-body">
+  <p>You will automatically log out from your session in <strong>{{countdown}} seconds</strong>.</p>
+  <p>If you would like to remain logged in, please select <strong>"Continue"</strong>.</p>
+</div>
+<div class="modal-footer text-center">
+  <div class="col-12">
+    <button class="btn btn-primary" (click)="activeModal.close('Continue')">Continue</button>
+  </div>
+</div>

@@ -1,0 +1,48 @@
+/** Filter Widget **/
+.filter-button-color {
+  background-color: $light-blue !important;
+}
+.filter-button-default-color {
+  background-color: $light-grey-01;
+  color: $dark !important;
+}
+.filter-button {
+  border-radius: 11px;
+  color: $white;
+  background-color: $light-grey-03;
+  border: 5px solid transparent;
+  background-clip:padding-box;
+}
+.filter-button-title {
+  font-weight: bold;
+  line-height: 3;
+  margin-bottom: 6px;
+}
+.filter-button:hover{
+  background-color: $light-grey-01;
+}
+.filter-button:focus {
+  color: $white !important;
+  @extend .filter-button-color;
+}
+.hover-activated-filter-button {
+  background-color: $blue-grey !important;
+}
+.selected-filter-button {
+  background-color: $dark-grey !important;
+}
+.filter-button h3{
+  font-weight: normal;
+}
+
+.filter-button-title-color {
+  font-weight: bold;
+  line-height: 3;
+  margin-bottom: 6px;
+  color:#69a3b9;
+}
+
+.filter-button:active, 
+.filter-button:active .filter-button-title-color {
+color: $white!important; 
+}

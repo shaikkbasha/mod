@@ -1,0 +1,20 @@
+<div>
+    <label class="label-group" id="{{id}}">
+        {{label ? label : '--'}}
+    </label>
+    <div *ngIf="((!format || (format && format.format !== 'Date')) && value)" class="label-primary value-group">
+        {{value}}</div>
+    <div *ngIf="(value && value !== 'Invalid Date' && (format && format.format === 'Date'))"
+        class="label-primary value-group">
+        <span *ngIf="format.upperCase">
+            {{value | date: format.conversionFormat | uppercase}}
+        </span>
+        <span *ngIf="!format.upperCase && format.timeZone">
+            {{value | date: format.conversionFormat : format.timeZone}}
+        </span>
+        <span *ngIf="!format.upperCase && !format.timeZone">
+                {{value | date: format.conversionFormat}}
+            </span>
+    </div>
+    <div *ngIf="!value || value === 'Invalid Date'" class="label-primary value-group">--</div>
+</div>

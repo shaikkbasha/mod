@@ -1,0 +1,39 @@
+.btn-group {
+    .active-btn{
+      color: $white !important;
+      background-color: $light-blue !important;
+    } x
+    &.active-btn:hover {
+      background-color: $blue-grey !important;
+    }
+    }
+    .mod{
+      width:6% !important; 
+    }
+    .btn-group {
+      label {
+        border-color: $dark !important;
+        background-color: $light-grey-02 !important;
+        &:hover:not(.active):not(.active-mouse-down):not(.inactive-mouse-down) {
+          background-color: $light-grey-01 !important;
+        }
+       // &.active {
+       //   color: $white !important;
+        //  background-color: $light-blue !important;
+       // }
+       // &.active {
+       //   background-color: $light-blue !important;
+       // }
+        &.active:hover {
+          background-color: $blue-grey !important;
+        }
+        &.active-mouse-down{
+          color: $white !important;
+          background-color: $dark-grey !important;
+        }
+        &.inactive-mouse-down:not(.active) {
+          color: $white !important;
+          background-color: $light-blue !important;
+        }
+      }
+    }

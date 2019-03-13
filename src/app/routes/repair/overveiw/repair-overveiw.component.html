@@ -1,0 +1,763 @@
+<!--home page for repair -->
+<div class="content-area">
+
+    <div class="container">
+        <div class="row">
+
+
+            <div class="col-6 col-sm-4 col-md-3 col-xl-2 text-center">
+                <a id="lnk-repair-removals" [routerLink]="['/repairs', 'removals']">
+
+                    <span class="fa-stack fa-4x home-icon" id="spn-repair-removals">
+                        <i class="fa fa-circle fa-stack-2x"></i>
+                        <i class="fa fa-times-circle-o fa-stack-1x fa-inverse"></i>
+                    </span>
+                    <div class="container">
+                        <label id="lbl-removal">
+                            REMOVALS</label>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-6 col-sm-4 col-md-3 col-xl-2 text-center">
+                <a id="lnk-repair-repairs" [routerLink]="['/repairs', 'repairs']">
+
+                    <span class="fa-stack fa-4x home-icon" id="spn-repair-repairs">
+                        <i class="fa fa-circle fa-stack-2x"></i>
+                        <i class="fa fa-wrench fa-stack-1x fa-inverse"></i>
+                    </span>
+
+                </a>
+                <div class="container">
+                    <label id="lbl-repair">
+                        REPAIRS</label>
+                </div>
+            </div>
+
+            <div class="col-6 col-sm-4 col-md-3 col-xl-2 text-center">
+                <a id="lnk-repair-reports" [routerLink]="['/repairs', 'reports']">
+
+                    <span class="fa-stack fa-4x home-icon" id="spn-repair-reports">
+                        <i class="fa fa-circle fa-stack-2x"></i>
+                        <i class="fa fa-file-text-o fa-stack-1x fa-inverse"></i>
+                    </span>
+
+                </a>
+                <div class="container">
+                    <label id="lbl-report">
+                        REPORTS
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--removal information -->
+<ng-template #removalModal let-c="close" let-d="dismiss" class="modal">
+    <div class="hugeModal">
+        <div class="modal-header">
+            <h6 class="w-100 modal-title text-center">Create Repair</h6>
+            <button type="button" [disabled]="removalObj.isLoading" id="btn-repair-removal-close" class="close"
+                aria-label="Close" (click)="d('Cross click');resetFormData();">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <form [formGroup]="removalObj.formObj" (ngSubmit)="removalFormSubmit()">
+            <div class="modal-body pt-4">
+                <art-section-title [sectionTitle]="['REMOVAL INFORMATION']"></art-section-title>
+                <div class="row">
+                    <div class="form-group col-12">
+                        <div class="input-group">
+                            <input ngbAutofocus class="form-control" autocomplete="off" id="inp-repair-lruserialNumber"
+                                #serialNumber formControlName="serialNumber" type="text" name="serialNumber"
+                                placeholder="Search serial number...">
+                            <button class="btn-default" id="btn-removal-go" type="button" (click)="getLruSerial(serialNumber.value)"><i
+                                    class="glyphicon glyphicon-search" aria-hidden="true" *ngIf="removalObj.isLoading"
+                                    class="fa fa-spinner fa-pulse fa-fw mr-1"></i><span *ngIf="!removalObj.isLoading">Go!</span></button>
+                        </div>
+                        <div class="text-center p-2" [hidden]="!removalObj.isLoading">
+                            <span>Loading...</span>
+                        </div>
+                    </div>
+                    <div class="invalid-feedback d-inline ml-3 mr-3">
+                        <div class="alert alert-warning text-warning" role="alert" *ngIf="!removalObj.isLoading && searchFailed">
+                            <a (click)='removalObj.isError = false; searchFailed = false;' id="lnk-repair-removal-close"
+                                class="close text-warning" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>No removal found!</strong> No removal record has been found for the corresponding
+                            serial number
+                        </div>
+                    </div>
+                </div>
+                <div class="row" ngbAutofocus *ngIf="removalObj.enableSerialInfo && !removalObj.isLoading">
+                    <div class="form-group col-3">
+                        <art-label-value label='DATE' value="{{removalList.removalDate | date: 'MM/dd/yyyy HH:mm' : 'UTC'}}"></art-label-value>
+                    </div>
+                    <div class="form-group col-3">
+                        <art-label-value label='MAINTENANCE STATION' value='{{removalList.maintenanceStation?.fullName}}'></art-label-value>
+                    </div>
+                    <div class="form-group col-3">
+                        <art-label-value label='AIRLINE' value='{{removalList.airlineName}}'></art-label-value>
+                    </div>
+                    <div class="form-group col-3">
+                        <art-label-value label='TAIL' value='{{removalList.tailSign}}'></art-label-value>
+                    </div>
+                </div>
+
+                <div class="row" ngbAutofocus *ngIf="removalObj.enableSerialInfo && !removalObj.isLoading">
+                    <div class="form-group col-3">
+                        <art-label-value label='LRU PART NUMBER' value='{{removalList.lruPartNumber?.lruPartNumber}}'></art-label-value>
+                    </div>
+                    <div class="form-group col-3">
+                        <art-label-value label='LRU SERIAL NUMBER' value='{{removalList.serialNumberOFF}}'></art-label-value>
+                    </div>
+                    <div class="form-group col-3">
+                        <art-label-value label='REASON OF REMOVAL' value='{{removalList.reasonOfRemoval?.description}}'></art-label-value>
+                    </div>
+                </div>
+                <div class="">
+                    <div class="row" *ngIf="removalObj.enableSerialInfo && !removalObj.isLoading">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="mandatory-field" id="lbl-repair-removal-repairstation">REVISION</label>
+                                <select name="repairRevisionApi" #repairRevisions formControlName="repairRevisionApi"
+                                    class="form-control content-dark repair-repairStation" [ngClass]="{' d-inline': (removalObj.formSubmitted || removalObj.formObj.controls.repairRevisionApi.dirty) && removalObj.formObj.controls.repairRevisionApi.errors }">
+                                    <option value=''>--Select--</option>
+                                    <option *ngFor="let rep of revision" [ngValue]="rep">
+                                        {{rep}}
+                                    </option>
+                                </select>
+                                <div *ngIf="removalObj.formSubmitted && removalObj.formObj.controls.repairRevisionApi.errors"
+                                    class="invalid-feedback d-inline">
+                                    <div *ngIf="removalObj.formObj.controls.repairRevisionApi.errors.required">RepairRevision
+                                        is required</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <select name="repairRevisionNumber" #repairRevisionNumber class="form-control content-dark repair-repairStation"
+                                    formControlName="repairRevisionNumber">
+                                    <option value=''>--Select--</option>
+                                    <option *ngFor="let rep of rev" [ngValue]="rep">
+                                        {{rep}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group mod-dot">
+                                <label class="mandatory-field" id="lbl-repair-removal-mod">MOD DOT IN</label>
+                                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                                    <div class="btn-group btn-group-toggle mr-2 mod-dot">
+                                        <label *ngFor="let tp of modIn1" class="btn-outline-secondary mod-dot form-control content-dark"
+                                            ngbButtonLabel [ngClass]="{'active-btn': modInData.indexOf(tp) > -1}">
+                                            <input type="checkbox" name="mod" ngbButton formControlName="repairRevision"
+                                                (click)="selectedBtn(tp)"> {{tp}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                                    <div class="btn-group btn-group-toggle mr-2">
+                                        <label *ngFor="let tep of modDot1" class="mod btn-outline-secondary mod-dot form-control content-dark "
+                                            [ngClass]="{'active-btn': modInData.indexOf(tep) > -1}" ngbButtonLabel>
+                                            <input type="checkbox" name="modin" ngbButton formControlName="repairRevision"
+                                                (click)="selectedBtn(tep)"> {{tep}}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" class="btn btn-primary art-button mr-auto" id="btn-removal-createremoval" (click)="getRemovalModal(serialNumber.value)"
+                    [disabled]="removalObj.enableSerialInfo ||removalObj.isLoading">
+                    Create Removal
+                </button>
+                <button type="button" class="btn btn-secondary art-button" id="btn-repair-removal-cancel" [disabled]="removalObj.isLoading"
+                    (click)="c('Save click');resetFormData();">Cancel</button>
+                <button type="submit" class="btn btn-primary art-button " id="btn-repair-removal-next" [disabled]="!removalObj.enableSerialInfo || removalObj.isLoading"
+                    (click)="getRepairModal()">
+                    Next
+                </button>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+<!--  createremovalmodal information -->
+<ng-template #createRemovalModal let-c="close" let-d="dismiss" class="modal">
+    <div class="modal-header" ngbAutofocus>
+        <h6 class="w-100 modal-title text-center">Create Removal</h6>
+        <button type="button" [disabled]="createRemovalModal.isFormSubmitted" id="btn-Createremoval-close" class="close"
+            aria-label="Close" (click)="d('Cross click');resetFormData();">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <!--create removal modal form-->
+
+    <form [formGroup]="createRemovalObj.formObj" (ngSubmit)="createFormSubmit()">
+        <div class="modal-body pt-4" ngbAutofocus>
+            <div class="row" ngbAutofocus>
+                <div class="form-group col-sm-3">
+                    <label class="mandatory-field" id="lbl-repair-Createremoval-repairdate">REMOVAL DATE</label>
+                    <div class="input-group create-repair-datepicker">
+                        <input class="form-control" placeholder="Removal Date" name="pickerModel" formControlName="pickerModel"
+                            ngbDatepicker #start="ngbDatepicker" [ngClass]="{ 'd-inline': (createRemovalObj.formSubmitted || createRemovalObj.formObj.controls.pickerModel.dirty) && createRemovalObj.formObj.controls.pickerModel.errors }">
+                        <button class="input content-dark cursor-pointer date-range-picker-color" type="button" (click)="start.toggle()">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div *ngIf="createRemovalObj.formSubmitted && createRemovalObj.formObj.controls.pickerModel.errors"
+                        class="invalid-feedback d-inline">
+                        <div *ngIf="createRemovalObj.formObj.controls.pickerModel.errors.required">Date is required</div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label class="mandatory-field" id="lbl-repair-removal-repairstation">MAINTENANCE STATION</label>
+                    <select name="maintenanceSation" #maintenanceSation formControlName="maintenanceSation" class="form-control content-dark"
+                        [ngClass]="{ ' d-inline': (createRemovalObj.formSubmitted || createRemovalObj.formObj.controls.maintenanceSation.dirty) && createRemovalObj.formObj.controls.maintenanceSation.errors }">
+                        <option value=''>--Select--</option>
+                        <option *ngFor="let re of maintenancedata" [value]="re.id">
+                            {{re.fullName}}
+                        </option>
+                    </select>
+                    <div *ngIf="createRemovalObj.formSubmitted && createRemovalObj.formObj.controls.maintenanceSation.errors"
+                        class="invalid-feedback d-inline">
+                        <div *ngIf="createRemovalObj.formObj.controls.maintenanceSation.errors.required">Maintenance
+                            Station
+                            is required</div>
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-3">
+                    <label class="mandatory-field" id="lbl-repair-removal-repairstation">AIRLINE</label>
+                    <select name="repairAiline" (change)="getAircraftList($event.target.value)" #repairAiline
+                        formControlName="repairAiline" class="form-control content-dark repair-repairStation" [ngClass]="{ ' d-inline': (createRemovalObj.formSubmitted || createRemovalObj.formObj.controls.repairAiline.dirty) && createRemovalObj.formObj.controls.repairAiline.errors }">
+                        <option value=''>--Select--</option>
+                        <option *ngFor="let air of airData" [value]="air.icao">
+                            {{air.name}}
+                        </option>
+                    </select>
+                    <div *ngIf="createRemovalObj.formSubmitted && createRemovalObj.formObj.controls.repairAiline.errors"
+                        class="invalid-feedback d-inline">
+                        <div *ngIf="createRemovalObj.formObj.controls.repairAiline.errors.required"> Airline is
+                            required</div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label class="mandatory-field" id="lbl-repair-removal-repairstation">TAIL</label>
+                    <select *ngIf="tailsData" name="repairTail" #repairTail formControlName="repairTail" class="form-control content-dark repair-repairStation"
+                        [ngClass]="{ ' d-inline': (createRemovalObj.formSubmitted || createRemovalObj.formObj.controls.repairTail.dirty) && createRemovalObj.formObj.controls.repairTail.errors }">
+                        <option value=''>--Select--</option>
+                        <option *ngFor="let tai of tailsData" [value]="tai.id">
+                            {{tai.tailNumber}}
+                        </option>
+                    </select>
+                    <div *ngIf="createRemovalObj.formSubmitted && createRemovalObj.formObj.controls.repairTail.errors"
+                        class="invalid-feedback d-inline">
+                        <div *ngIf="createRemovalObj.formObj.controls.repairTail.errors.required"> Tail is
+                            required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ngbAutofocus>
+                <div class="form-group col-sm-3">
+                    <label class="mandatory-field" id="lbl-repair-removal-repairstation">LRU NAME</label>
+                    <select name="repairlruName" #repairlruName formControlName="repairlruName" class="form-control content-dark repair-repairStation"
+                        [ngClass]="{ ' d-inline': (createRemovalObj.formSubmitted || createRemovalObj.formObj.controls.repairlruName.dirty) && createRemovalObj.formObj.controls.repairlruName.errors }">
+                        <option value=''>--Select--</option>
+                        <option *ngFor="let lr of lurNameData" [value]="lr.id">
+                            {{lr.name}}
+                        </option>
+                    </select>
+                    <div *ngIf="createRemovalObj.formSubmitted && createRemovalObj.formObj.controls.repairlruName.errors"
+                        class="invalid-feedback d-inline">
+                        <div *ngIf="createRemovalObj.formObj.controls.repairlruName.errors.required">LRU Name is
+                            required</div>
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-3">
+                    <label class="mandatory-field" id="lbl-repair-removal-repairstation">LRU PART NUMBER</label>
+                    <select name="repairlruPartNumber" #repairlruPartNumber formControlName="repairlruPartNumber" class="form-control content-dark repair-repairStation"
+                        [ngClass]="{ 'd-inline': (createRemovalObj.formSubmitted || createRemovalObj.formObj.controls.repairlruPartNumber.dirty) && createRemovalObj.formObj.controls.repairlruPartNumber.errors }">
+                        <option value=''>--Select--</option>
+                        <option *ngFor="let par of LruNumberData" [value]="par.id">
+                            {{par.lruPartNumber}}
+                        </option>
+                    </select>
+                    <div *ngIf="createRemovalObj.formSubmitted && createRemovalObj.formObj.controls.repairlruPartNumber.errors"
+                        class="invalid-feedback d-inline">
+                        <div *ngIf="createRemovalObj.formObj.controls.repairlruPartNumber.errors.required">LRU Part
+                            Number
+                            is
+                            required</div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label class="mandatory-field" id="lbl-repair-removal-repairstation">REASON OF REMOVAL</label>
+                    <select name="repairReasonOfRemoval" #repairReasonOfRemoval formControlName="repairReasonOfRemoval"
+                        class="form-control content-dark repair-repairStation" [ngClass]="{ ' d-inline': (createRemovalObj.formSubmitted || createRemovalObj.formObj.controls.repairReasonOfRemoval.dirty) && createRemovalObj.formObj.controls.repairReasonOfRemoval.errors }">
+                        <option value=''>--Select--</option>
+                        <option *ngFor="let li of ReasonData" [value]="li.id">
+                            {{li.description}}
+                        </option>
+                    </select>
+                    <div *ngIf="createRemovalObj.formSubmitted && createRemovalObj.formObj.controls.repairReasonOfRemoval.errors"
+                        class="invalid-feedback d-inline">
+                        <div *ngIf="createRemovalObj.formObj.controls.repairReasonOfRemoval.errors.required">Reason Of
+                            Removal
+                            is
+                            required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div>
+                    <label class="mandatory-field col-12 row" id="lbl-repair-removal-lruserial">LRU SERIAL NUMBER</label>
+                    <input type="text" name="lruSerialNumber" class="form-control content-dark col-6" id="inp-removal-lurserial-name"
+                        formControlName="lruSerialNumber" ngbAutofocus [ngClass]="{ 'invalid-feedback d-inline': (createRemovalObj.formSubmitted || createRemovalObj.formObj.controls.lruSerialNumber.dirty) && createRemovalObj.formObj.controls.lruSerialNumber.errors }" />
+                    <p class="text-danger" *ngIf="createRemovalObj.isError" class="col-12 row invalid-feedback d-block">{{createRemovalObj.errorMsg}}</p>
+
+                </div>
+                <div *ngIf="createRemovalObj.formSubmitted && createRemovalObj.formObj.controls.lruSerialNumber.errors"
+                    class="invalid-feedback d-inline">
+                    <div *ngIf="!createRemovalObj.isError && createRemovalObj.formObj.controls.lruSerialNumber.errors.required">LRU
+                        Serial Number
+                        is
+                        required
+                    </div>
+                </div>
+            </div>
+            <div class="">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label class="mandatory-field" id="lbl-repair-removal-repairstation">REVISION</label>
+                            <select name="repairRevisionApi" #repairRevisions formControlName="repairRevisionApi" class="form-control content-dark repair-repairStation"
+                                [ngClass]="{' d-inline': (createRemovalObj.formSubmitted || createRemovalObj.formObj.controls.repairRevisionApi.dirty) && createRemovalObj.formObj.controls.repairRevisionApi.errors }">
+                                <option value=''>--Select--</option>
+                                <option *ngFor="let rep of revision" [value]="rep">
+                                    {{rep}}
+                                </option>
+                            </select>
+                            <div *ngIf="createRemovalObj.formSubmitted && createRemovalObj.formObj.controls.repairRevisionApi.errors"
+                                class="invalid-feedback d-inline">
+                                <div *ngIf="createRemovalObj.formObj.controls.repairRevisionApi.errors.required">Revision
+                                    is
+                                    required</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <select name="repairRevisionNumber" #repairRev class="form-control content-dark repair-repairStation"
+                                formControlName="repairRevisionNumber">
+                                <option value=''>--Select--</option>
+                                <option *ngFor="let rep of rev" [value]="rep">
+                                    {{rep}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+
+                            <label class="mandatory-field" id="lbl-repair-removal-mod">MOD DOT IN</label>
+                            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+                                <div class="btn-group btn-group-toggle mr-2 mod-dot">
+                                    <label *ngFor="let tp of modIn1" class="btn-outline-secondary mod-dot form-control content-dark "
+                                        (mousedown)="modFilterMouseDown(tp)" (mouseup)="modFilterMouseUp()" [ngClass]="{'inactive-mouse-down': modMouseDownFilter === tp && modInActiveFilterMouseDown, 'active-mouse-down': modFilter === tp && modActiveFilterMouseDown, 'active': modFilter === tp && !modActiveFilterMouseDown}"
+                                        ngbButtonLabel>
+                                        <input type="checkbox" name="mod" ngbButton formControlName="repairRevision"
+                                            (click)="selectedBtn(tp)"> {{tp}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+
+                                <div class="btn-group btn-group-toggle mr-2">
+                                    <label *ngFor="let tep of modDot1" class="mod btn-outline-secondary mod-dot form-control content-dark"
+                                        (mousedown)="modFilterMouseDown(tep)" (mouseup)="modFilterMouseUp()" [ngClass]="{'inactive-mouse-down': modMouseDownFilter === tep && modInActiveFilterMouseDown, 'active-mouse-down': modFilter === tep && modActiveFilterMouseDown, 'active': modFilter === tep && !modActiveFilterMouseDown}"
+                                        ngbButtonLabel>
+                                        <input type="checkbox" name="modin" ngbButton (click)="selectedBtn(tep)">
+                                        {{tep}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer form-group">
+            <button type="button" class="btn btn-secondary art-button" id="btn-Createremoval-createremoval-cancel"
+                [disabled]="createRemovalModal.isFormSubmitted" (click)="c('Cross click');resetFormData();">Cancel</button>
+            <button type="submit" class="btn btn-primary art-button" id="btn-Createremoval-createremoval-saveremoval"
+                [disabled]="createRemovalModal.isFormSubmitted">
+                <!-- <i *ngIf="createRemovalObj.formSubmitted" class="fa fa-spinner fa-pulse fa-fw mr-1"></i> -->
+                <i *ngIf="createRemovalObj.loadVisible" class="fa fa-spinner fa-pulse fa-fw mr-1"></i>
+
+                Save removal </button>
+        </div>
+    </form>
+
+
+</ng-template>
+
+<!-- create repair information -->
+
+<ng-template #repairModal let-close="close" let-dismiss="dismiss" class="modal">
+    <div class="modal-header" ngbAutofocus>
+        <h6 class="w-100 modal-title text-center">Create Repair</h6>
+        <button type="button" [disabled]="repairModal.isFormSubmitted" id="btn-removal-close" class="close" aria-label="Close"
+            (click)="dismiss('Cross click');resetFormData();">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <!--create repair form modal-->
+    <form [formGroup]="repairObj.formObj" (ngSubmit)="repairFormSubmit()">
+        <div class="modal-body pt-4" ngbAutofocus>
+            <art-section-title [sectionTitle]="['REPAIR INFORMATION']"></art-section-title>
+            <div class="row" ngbAutofocus>
+                <div class="form-group col-sm-3">
+                    <label class="mandatory-field" id="lbl-repair-removal-repairdate">REPAIR DATE</label>
+                    <div class="input-group create-repair-datepicker">
+                        <input class="form-control" name="pickerModel" formControlName="pickerModel" ngbDatepicker
+                            #start="ngbDatepicker" [ngClass]="{ 'd-inline': (repairObj.formSubmitted || repairObj.formObj.controls.pickerModel.dirty) && repairObj.formObj.controls.pickerModel.errors }">
+                        <button class="input content-dark cursor-pointer date-range-picker-color" type="button" (click)="start.toggle()">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div *ngIf="repairObj.formSubmitted && repairObj.formObj.controls.pickerModel.errors" class="invalid-feedback d-inline">
+                        <div *ngIf="repairObj.formObj.controls.pickerModel.errors.required">Date is required</div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label class="mandatory-field" id="lbl-repair-removal-repairstation">REPAIR STATION</label>
+                    <select name="repairDropDownList" id="sl-repair-removal-repairstation" #repairDropDownList
+                        formControlName="repairStation" class="form-control content-dark repair-repairStation"
+                        [ngClass]="{ 'd-inline': (repairObj.formSubmitted || repairObj.formObj.controls.repairStation.dirty) && repairObj.formObj.controls.repairStation.errors }">
+                        <option value=''>--Select--</option>
+                        <option *ngFor="let rep of list">
+                            {{rep.fullName}}
+                        </option>
+                    </select>
+                    <div *ngIf="repairObj.formSubmitted && repairObj.formObj.controls.repairStation.errors" class="invalid-feedback d-inline">
+                        <div *ngIf="repairObj.formObj.controls.repairStation.errors.required">Repair Station is
+                            required</div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label class="mandatory-field" id="lbl-repair-removal-techician">REPAIR TECHNICIAN</label>
+                    <input type="text" autocomplete="off" id="bl-repair-removal-techician" name="techician"
+                        formControlName="techician" class="form-control content-dark" [ngClass]="{ 'invalid-feedback d-inline': (repairObj.formSubmitted || repairObj.formObj.controls.techician.dirty) && repairObj.formObj.controls.techician.errors }" />
+                    <div *ngIf="repairObj.formSubmitted && repairObj.formObj.controls.techician.errors" class="invalid-feedback d-inline">
+                        <div *ngIf="repairObj.formObj.controls.techician.errors.required">Techician is required</div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label class="mandatory-field" id="lbl-repair-removal-workOrder">WORK ORDER</label>
+                    <input type="text" id="inp-removal-workOrder" ngbAutofocus name="workOrder" formControlName="workOrder"
+                        autofocus class="form-control content-dark" [ngClass]="{ 'invalid-feedback d-inline': (repairObj.formSubmitted || repairObj.formObj.controls.workOrder.dirty) && repairObj.formObj.controls.workOrder.errors }" />
+                    <div *ngIf="repairObj.formSubmitted && repairObj.formObj.controls.workOrder.errors" class="invalid-feedback d-inline">
+                        <div *ngIf="repairObj.formObj.controls.workOrder.errors.required">Work Order Name is required</div>
+                    </div>
+
+                </div>
+
+            </div>
+            <!--REPAIR TEYPE-->
+            <div>
+                <label id="lbl-repair-removal-repairtype">REPAIR TYPE</label>
+                <div class="radiobtn-repair">
+                    <mat-radio-group class="repair-type-radio-group" formControlName="repairType" name="repairType">
+                        <mat-radio-button [disableRipple]="false" class="mr-4 repair-type-radio-button removal-radio-btn"
+                            [ngClass]="{ 'invalid-feedback d-inline': (repairObj.formSubmitted || repairObj.formObj.controls.repairType.dirty) && repairObj.formObj.controls.repairType.errors }"
+                            placeholder="Repair Type" *ngFor="let typ of repairTypes" [value]="typ">
+                            <span class="font-weight-bolder" [innerHTML]="typ.label"></span><br>
+                            <span class="font-weight-light"> {{typ.key}}</span>
+                        </mat-radio-button>
+                    </mat-radio-group>
+                    <div *ngIf="repairObj.formSubmitted && repairObj.formObj.controls.repairType.errors" class="invalid-feedback d-inline">
+                        <div *ngIf="repairObj.formObj.controls.repairType.errors.required">Repair Type is required</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--create repair modal footer-->
+        <div class="modal-footer form-group">
+            <button type="button" class="btn btn-secondary art-button mr-auto" id="btn-repair-removal-cancel"
+                [disabled]="repairModal.isFormSubmitted" (click)="close('Save click');resetFormData();">back</button>
+            <button type="button" class="btn btn-secondary art-button" id="btn-repair-removal-cancel" [disabled]="repairModal.isFormSubmitted"
+                (click)="close('Save click');resetFormData();">Cancel</button>
+            <button type="submit" class="btn btn-primary art-button" id="btn-repair-repairs-next" (click)="getfaultModal()"
+                [disabled]="repairModal.isFormSubmitted">
+                <i *ngIf="repairObj.loadVisible" class="fa fa-spinner fa-pulse fa-fw mr-1"></i> Next
+            </button>
+        </div>
+    </form>
+</ng-template>
+<!--  No Falut found information -->
+<ng-template #faultModal let-close="close" let-dismiss="dismiss" class="modal">
+    <div class="modal-header" ngbAutofocus>
+        <h6 class="w-100 modal-title text-center">Create Repair</h6>
+        <button type="button" [disabled]="repairModal.isFormSubmitted" id="btn-removal-close" class="close" aria-label="Close"
+            (click)="dismiss('Cross click');resetFormData();">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <!--create repair form modal-->
+    <form [formGroup]="faultObj.formObj" (ngSubmit)="faultFormSubmit()">
+        <div class="modal-body pt-4" ngbAutofocus>
+            <art-section-title [sectionTitle]="['NO FAULT FOUND DETAILS']"></art-section-title>
+            <div class="form-group">
+                <div>
+                    <label class="mandatory-field" id="lbl-repair-removal-lruserial">COMMENTS/REMARKS</label>
+                    <input type="text" name="remarks" class="form-control content-dark p-4" id="inp-removal-lurserial-name"
+                        formControlName="remarks" ngbAutofocus [ngClass]="{ 'invalid-feedback d-inline': (faultObj.formSubmitted || faultObj.formObj.controls.remarks.dirty) && faultObj.formObj.controls.remarks.errors }" />
+
+                </div>
+                <div *ngIf="faultObj.formSubmitted && faultObj.formObj.controls.remarks.errors" class="invalid-feedback d-inline">
+                    <div *ngIf="faultObj.formObj.controls.remarks.errors.required">Comments/Remarks is required
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!--create repair modal footer-->
+        <div class="modal-footer form-group">
+            <button type="button" class="btn btn-secondary art-button mr-auto" id="btn-repair-removal-cancel"
+                [disabled]="faultModal.isFormSubmitted" (click)="close('Save click');resetFormData();">back</button>
+            <button type="button" class="btn btn-secondary art-button" id="btn-repair-removal-cancel" [disabled]="faultModal.isFormSubmitted"
+                (click)="close('Save click');resetFormData();">Cancel</button>
+            <button type="submit" class="btn btn-primary art-button" id="btn-repair-repairs-next" [disabled]="faultModal.isFormSubmitted"
+                (click)="getModOutModal()">
+                <i *ngIf="faultObj.loadVisible" class="fa fa-spinner fa-pulse fa-fw mr-1"></i> Next
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+
+<!-- mod out  information-->
+<ng-template #modModal let-close="close" let-dismiss="dismiss" class="modal">
+    <div class="modal-header" ngbAutofocus>
+        <h6 class="w-100 modal-title text-center">Create Repair</h6>
+        <button type="button" [disabled]="modModal.isFormSubmitted" id="btn-removal-close" class="close" aria-label="Close"
+            (click)="dismiss('Cross click');resetFormData();">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <!--create repair form modal-->
+    <form [formGroup]="modObj.formObj" (ngSubmit)="modFormSubmit()">
+        <div class="modal-body pt-4" ngbAutofocus>
+            <art-section-title [sectionTitle]="[' MOD DOT OUT ']"></art-section-title>
+            <div class="form-group">
+                <div class="col-sm-12 row">
+                    <div class="form-group mod-dot">
+                        <label class="mandatory-field" id="lbl-repair-removal-mod">MOD DOT IN</label>
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="btn-group btn-group-toggle mr-2 mod-dot">
+                                <label *ngFor="let tp of modIn1"   [attr.disabled]="disabled ? '' : null" class="btn-outline-secondary mod-dot form-control content-dark"
+                                    ngbButtonLabel [ngClass]="{'active-btn': modInData.indexOf(tp) > -1}">
+                                    <input type="checkbox" name="mod" ngbButton [disabled]="true"
+                                        formControlName="repairRevision" (click)="selectedBtn(tp)"> {{tp}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="btn-group btn-group-toggle mr-2">
+                                <label *ngFor="let tep of modDot1" class="mod btn-outline-secondary mod-dot form-control content-dark "
+                                    [ngClass]="{'active-btn': modInData.indexOf(tep) > -1}" ngbButtonLabel>
+                                    <input type="checkbox" name="modin" [disabled]="true"  ngbButton formControlName="repairRevision"
+                                        (click)="selectedBtn(tep)"> {{tep}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12 row">
+                    <div class="form-group mod-dot">
+                        <label class="mandatory-field" id="lbl-repair-removal-mod">MOD DOT OUT</label>
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="btn-group btn-group-toggle mr-2 mod-dot">
+                                <label *ngFor="let tp of modIn1" class="btn-outline-secondary mod-dot form-control content-dark"
+                                [ngClass]="{'active-btn': modOutData.indexOf(tp) > -1}"  ngbButtonLabel >
+                                    <input type="checkbox" name="mod"   ngbButton formControlName="repairRevision"
+                                        (click)="selectedBtnOut(tp)"> {{tp}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="btn-group btn-group-toggle mr-2">
+                                <label *ngFor="let tep of modDot1" class="mod btn-outline-secondary mod-dot form-control content-dark "
+                                    [ngClass]="{'active-btn': modOutData.indexOf(tep) > -1}" ngbButtonLabel>
+                                    <input type="checkbox" name="modin"  ngbButton formControlName="repairRevision"
+                                        (click)="selectedBtnOut(tep)"> {{tep}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--create repair modal footer-->
+        <div class="modal-footer form-group">
+            <button type="button" class="btn btn-secondary art-button mr-auto" id="btn-repair-removal-cancel"
+                [disabled]="modModal.isFormSubmitted" (click)="close('Save click');resetFormData();">back</button>
+            <button type="button" class="btn btn-secondary art-button" id="btn-repair-removal-cancel" [disabled]="modModal.isFormSubmitted"
+                (click)="close('Save click');resetFormData();">Cancel</button>
+            <button type="submit" class="btn btn-primary art-button" (click)="getReviewModal()" id="btn-repair-repairs-next"
+                [disabled]="modModal.isFormSubmitted">
+                Next
+            </button>
+        </div>
+    </form>
+</ng-template>
+<ng-template #reviewModal let-close="close" let-dismiss="dismiss" class="modal">
+    <div class="modal-header" ngbAutofocus>
+        <h6 class="w-100 modal-title text-center">Create Repair</h6>
+        <button type="button" [disabled]="reviewModal.isFormSubmitted" id="btn-removal-close" class="close" aria-label="Close"
+            (click)="dismiss('Cross click');resetFormData();">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <!--create repair form modal-->
+    <form [formGroup]="reviewObj.formObj" (ngSubmit)="reviewFormSubmit()">
+        <div class="modal-body pt-4" ngbAutofocus>
+            <art-section-title [sectionTitle]="['REPAIR DETAILS']"></art-section-title>
+            <div class="row" ngbAutofocus>
+                <div class="form-group col-3">
+                    <art-label-value label='DATE' value="{{list.removalDate | date: 'MM/dd/yyyy HH:mm' : 'UTC'}}"></art-label-value>
+                </div>
+                <div class="form-group col-3">
+                    <art-label-value label='REPAIR STATION' value='{{list.repairStation?.fullName}}'></art-label-value>
+                </div>
+                <div class="form-group col-3">
+                    <art-label-value label='REPAIR TECHNICIAN' value='{{list.repairStation?.fullName}}'></art-label-value>
+                </div>
+                <div class="form-group col-3">
+                    <art-label-value label='WORK ORDER' value='{{list.repairStation?.fullName}}'></art-label-value>
+                </div>
+            </div>
+        </div>
+        <div class="modal-body pt-4" ngbAutofocus>
+            <art-section-title [sectionTitle]="['REMOVAL DETAILS']"></art-section-title>
+            <div class="row" ngbAutofocus>
+                <div class="form-group col-3">
+                    <art-label-value label='DATE' value="{{removalList.removalDate | date: 'MM/dd/yyyy HH:mm' : 'UTC'}}"></art-label-value>
+                </div>
+                <div class="form-group col-3">
+                    <art-label-value label='MAINTENANCE STATION' value='{{removalList.maintenanceStation?.fullName}}'></art-label-value>
+                </div>
+                <div class="form-group col-3">
+                    <art-label-value label='AIRLINE' value='{{removalList.airlineName}}'></art-label-value>
+                </div>
+                <div class="form-group col-3">
+                    <art-label-value label='TAIL' value='{{removalList.tailSign}}'></art-label-value>
+                </div>
+            </div>
+
+            <div class="row" ngbAutofocus>
+                <div class="form-group col-3">
+                    <art-label-value label='LRU PART NUMBER' value='{{removalList.lruPartNumber?.lruPartNumber}}'></art-label-value>
+                </div>
+                <div class="form-group col-3">
+                    <art-label-value label='LRU SERIAL NUMBER' value='{{removalList.serialNumberOFF}}'></art-label-value>
+                </div>
+                <div class="form-group col-3">
+                    <art-label-value label='REASON OF REMOVAL' value='{{removalList.reasonOfRemoval?.description}}'></art-label-value>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12 row">
+                    <div class="form-group mod-dot">
+                        <label class="mandatory-field" id="lbl-repair-removal-mod">MOD DOT IN</label>
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="btn-group btn-group-toggle mr-2 mod-dot">
+                                <label *ngFor="let tp of modIn1" class="btn-outline-secondary mod-dot form-control content-dark"
+                                    ngbButtonLabel [ngClass]="{'active-btn': modInData.indexOf(tp) > -1}">
+                                    <input type="checkbox" name="mod" [disabled]="true" ngbButton
+                                        formControlName="repairRevision" (click)="selectedBtn(tp)"> {{tp}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="btn-group btn-group-toggle mr-2">
+                                <label *ngFor="let tep of modDot1" class="mod btn-outline-secondary mod-dot form-control content-dark "
+                                    [ngClass]="{'active-btn': modInData.indexOf(tep) > -1}" ngbButtonLabel>
+                                    <input type="checkbox" name="modin" [disabled]="true" ngbButton formControlName="repairRevision"
+                                        (click)="selectedBtn(tep)"> {{tep}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal-body pt-4" ngbAutofocus>
+            <art-section-title [sectionTitle]="['NO FAULT FOUND DETAILS / LEVEL 1 REPAIR DETAILS / LEVEL 2 REPAIR DETAILS']"></art-section-title>
+        </div>
+        <div class="modal-body pt-4" ngbAutofocus>
+            <art-section-title [sectionTitle]="['MOD DOT OUT']"></art-section-title>
+            <div class="form-group">
+                <div class="col-sm-12 row">
+                    <div class="form-group mod-dot">
+                        <label class="mandatory-field" id="lbl-repair-removal-mod">MOD DOT OUT</label>
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="btn-group btn-group-toggle mr-2 mod-dot">
+                                <label *ngFor="let tp of modIn1" class="btn-outline-secondary mod-dot form-control content-dark"
+                                    ngbButtonLabel [ngClass]="{'active-btn': modInData.indexOf(tp) > -1}">
+                                    <input type="checkbox" name="mod" ngbButton formControlName="repairRevision"
+                                        (click)="selectedBtn(tp)"> {{tp}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            <div class="btn-group btn-group-toggle mr-2">
+                                <label *ngFor="let tep of modDot1" class="mod btn-outline-secondary mod-dot form-control content-dark "
+                                    [ngClass]="{'active-btn': modInData.indexOf(tep) > -1}" ngbButtonLabel>
+                                    <input type="checkbox" name="modin" ngbButton formControlName="repairRevision"
+                                        (click)="selectedBtn(tep)"> {{tep}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--create repair modal footer-->
+        <div class="modal-footer form-group">
+            <button type="button" class="btn btn-secondary art-button mr-auto" id="btn-repair-removal-cancel"
+                [disabled]="reviewModal.isFormSubmitted" (click)="close('Save click');resetFormData();">back</button>
+            <button type="button" class="btn btn-secondary art-button" id="btn-repair-removal-cancel" [disabled]="reviewModal.isFormSubmitted"
+                (click)="close('Save click');resetFormData();">Cancel</button>
+            <button type="submit" class="btn btn-primary art-button" id="btn-repair-repairs-next" [disabled]="reviewModal.isFormSubmitted">
+                <i *ngIf="faultObj.loadVisible" class="fa fa-spinner fa-pulse fa-fw mr-1"></i> Save repair
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+
+<art-action-toolbar [config]="actionToolBarConfig" (actionToolBarEvent)="getEvent($event)"></art-action-toolbar>

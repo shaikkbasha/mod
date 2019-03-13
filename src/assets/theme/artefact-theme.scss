@@ -1,0 +1,62 @@
+
+
+// Google Fonts
+//@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700");
+@import url("https://fonts.googleapis.com/css?family=Roboto:400,300,500,700,900");
+
+
+/*********** GLOBAL CSS ***********/
+
+// Variables, Mixins
+@import "imports/variables";
+
+
+
+/*********** BOOTSTRAP CSS ***********/
+
+// Elements
+@import "imports/base";
+@import "imports/typography";
+@import "imports/bootstrap_media";
+@import "imports/bootstrap_buttons";
+@import "imports/bootstrap_badges";
+@import "imports/bootstrap_navbar";
+@import "imports/bootstrap_forms";
+@import "imports/bootstrap_dropdowns";
+@import "imports/bootstrap_modal";
+@import 'imports/bootstrap_card';
+
+
+
+/*********** ANGULAR MATERIAL CSS ***********/
+
+@import '~@angular/material/theming';
+
+@import "imports/material_theme";
+@import "imports/material_typography";
+@import "imports/material_tables";
+@import "imports/material_checkboxes";
+
+
+
+/*********** OTHER CSS ***********/
+
+@import "imports/custom";
+@import "imports/toast";
+@import "imports/focus_object";
+@import "imports/utilities";
+@import 'imports/date_picker';
+@import 'imports/filter_button';
+@import 'imports/action_toolbar';
+@import 'imports/tuner_board';
+@import 'imports/label_value';
+@import 'imports/section_title';
+@import 'imports/repair_overview';
+
+
+@import '~ngx-toastr/toastr.css';
+
+$fa-font-path: "~font-awesome/fonts";
+@import '~font-awesome/scss/font-awesome';
+
+@import '~angular-tree-component/dist/angular-tree-component.css';

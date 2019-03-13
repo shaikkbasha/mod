@@ -1,0 +1,42 @@
+<div class="object-header">
+  <div class="row p-4 text-center">
+    <div class="col-12">
+      <h6 style="display: inline; font-weight: 700">
+        <img class="mr-3" src="./assets/objects/airline-modal.png" width="32px" height="32px" style="vertical-align: sub; margin-right: 5px">
+           <span>{{currentAirline || 'Loading...'}}</span>
+      </h6>
+    </div>
+  </div>
+  <div class="row text-center">
+    <div class="col-12">
+      <div class="btn-group active" role="group" *ngIf="currentAirlineId != null || currentAirlineId != undefined">
+        <button type="button" class="btn btn-tab btn-sm btn-tab-m-w" [routerLink]="['/airline', currentAirlineId, 'overview']"
+          [class.active]="isActive(['airline', currentAirlineId, 'overview'])" id="btn-airline-overiew">
+          Overview
+        </button>
+        <button type="button" class="btn btn-tab btn-sm btn-tab-m-w" [routerLink]="['/airline', currentAirlineId, 'tails']"
+          [class.active]="isActive(['airline', currentAirlineId, 'tails'])" id="btn-airline-talis">
+          Tails</button>
+        <button type="button" class="btn btn-tab btn-sm btn-tab-m-w" [routerLink]="['/airline', currentAirlineId, 'flights']"
+          [class.active]="isActive(['airline', currentAirlineId, 'flights'])" id="btn-airline-flights">
+          Flights
+        </button>
+        <button type="button" class="btn btn-tab btn-sm btn-tab-m-w" [routerLink]="['/airline', currentAirlineId,'offloads']"
+          [class.active]="isActive(['airline', currentAirlineId, 'offloads'])" id="btn-payloads-offloads">
+          Offloads
+        </button>
+        <button type="button" class="btn btn-tab btn-sm btn-tab-m-w" [routerLink]="['/airline', currentAirlineId, 'coverage']"
+          [class.active]="isActive(['airline', currentAirlineId, 'coverage'])" id="btn-payloads-coverage">
+          Coverage
+        </button>
+        <button type="button" class="btn btn-tab btn-sm btn-tab-m-w" [routerLink]="['/airline', currentAirlineId, 'tv-performance']"
+          [class.active]="isActive(['airline', currentAirlineId, 'tv-performance'])">
+          TV Performance
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="content-area">
+  <router-outlet></router-outlet>
+</div>

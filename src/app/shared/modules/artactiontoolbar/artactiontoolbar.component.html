@@ -1,0 +1,63 @@
+<div class="clearfix p-5"></div>
+<div class="art-action-toolbar col-12">
+  <nav class="action-tool-bar navbar navbar-expand-md navbar-dark fixed-bottom highlight-action-toolbar"
+       [ngClass]="{'highlight-action-toolbar' : (getSelectedRow && getSelectedRow?.length)}">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+
+      <ul class="navbar-nav mr-auto cursor-pointer col-8" *ngIf="config.enableSearch">
+        <li class="nav-item active" (click)="enableSearch()" *ngIf="!enableSearchToolBar " [ngClass]="{'tool-bar-item': getSelectedRow.length}">
+          <a class="nav-link tool-bar-search" id='filterList' *ngIf="!getSelectedRow.length" [ngClass]="{'tool-bar-navLink': getSelectedRow?.length, 'tool-bar-nav-link': !getSelectedRow.length}">
+            <i class="fa fa-search toolbar-search-icon highlight-action-toolbar-icon-color" aria-hidden="true"
+               [ngClass]="{'highlight-action-toolbar-icon-color': (getSelectedRow && getSelectedRow?.length)}"></i>
+            <span class="ml-2">Filter List</span></a>
+        </li>
+       
+        <div class="col-12" *ngIf="enableSearchToolBar">                   
+          <input class="col-6 form-control action-toolbar-search d-inline" type="text" name="search" [attr.id]="config.filterIds.filterText" autocomplete="off" #searchBox (blur)="onBlur($event.target)" placeholder="Search" [(ngModel)]="listSearch" (ngModelChange)="searchLists()" /><span class="col-2 fa fa-search form-control-feedback search d-inline"></span>
+        </div>
+      </ul>
+      <ul class="navbar-nav mr-auto cursor-pointer col-6" *ngIf="!config?.enableSearch"></ul>
+      <div>
+        <ul class="navbar-nav form-inline mt-2 mt-md-0 cursor-pointer">
+          <li class="nav-item active" *ngIf="config.enableCreate  && !getSelectedRow?.length" [ngClass]="{'tool-bar-item': getSelectedRow.length}">
+              <a class="nav-link action-toolbar tool-bar-search" [ngClass]="{'tool-bar-navLink': getSelectedRow?.length, 'tool-bar-nav-link': !getSelectedRow.length}" (click)="toolBarEventClick('create', config.moduleName)" [attr.id]='config?.id'>
+                <i class="fa fa-plus toolbar-search-icon highlight-action-toolbar-icon-color" aria-hidden="true"
+                    [ngClass]="{'highlight-action-toolbar-icon-color': (getSelectedRow && getSelectedRow?.length)}"></i>
+              <span class="ml-2">{{config?.createLabel}}</span></a>
+          </li>
+
+       
+          <li class="nav-item active" *ngFor="let data of config.buttonList" >
+            <a [attr.id]='data?.id' class="nav-link action-toolbar tool-bar-search" *ngIf="!data?.isTableOperation || (getSelectedRow && getSelectedRow?.length)" (click)="toolBarEventClick(data.eventName, config.moduleName)">
+              <i class="{{data?.icon}} toolbar-search-icon highlight-action-toolbar-icon-color"
+                 aria-hidden="true"
+                 [ngClass]="{'highlight-action-toolbar-icon-color': (getSelectedRow && getSelectedRow?.length)}"></i>
+              <span class="ml-2">{{data?.label}} </span>
+            </a>
+          </li>    
+         
+    </ul>
+
+    <ul class="navbar-nav form-inline mt-md-0 cursor-pointer">
+        <li class="nav-item active" *ngIf="!config.enableCreate"></li>
+        
+          <li class="nav-item active" *ngFor="let data of config.uploadButtonList">
+            <a [attr.id]='data?.id' class="nav-link action-toolbar tool-bar-search" *ngIf="(getSelectedRow && getSelectedRow?.length) || data?.label==='Choose Files'" (click)="toolBarEventClick(data?.eventName, config?.moduleName)">
+              <i class="{{data?.icon}} toolbar-search-icon highlight-action-toolbar-icon-color"
+                 aria-hidden="true"
+                 [ngClass]="{'highlight-action-toolbar-icon-color': (getSelectedRow && getSelectedRow?.length)}"></i>
+              <span class="ml-2">{{data?.label}} </span>
+            </a>
+          </li>    
+         
+        </ul>
+
+        
+      </div>  
+    </div>
+  </nav>
+</div>

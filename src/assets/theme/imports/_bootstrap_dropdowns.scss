@@ -1,0 +1,52 @@
+.dropdown-toggle::after {
+  display: none !important;
+}
+
+//.dropdown-toggle::after {
+//  display: inline-block !important;
+//  display: inline-block !important;
+//  font: normal normal normal 14px/1 FontAwesome !important;
+//  font-size: inherit !important;
+//  text-rendering: auto !important;
+//  -webkit-font-smoothing: antialiased !important;
+//  -moz-osx-font-smoothing: grayscale !important;
+//  content: "\f054" !important;
+//}
+
+button.btn.btb-tab.art-caret.dropdown-toggle::after {
+  display: inline-block !important;
+  font-family: FontAwesome !important;
+  content: "\f142" !important;
+}
+
+.art-caret .dropdown-toggle > span.caret {
+  display: none !important;
+}
+
+.dropdown-menu {
+  font-size: 13px !important;
+  border-radius: 0px !important;
+  color: $blue-grey !important;
+}
+
+.dropdown-item {
+  font-weight: 700 !important;
+  color: $light-blue !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+.dropdown-menu > .dropdown-item:hover {
+  background-color: $light-grey-03 !important;
+  color: $blue-grey !important;
+}
+
+.dropdown-menu > .dropdown-item:active {
+  background-color: $light-blue !important;
+  color: white !important;
+}
+
+button.dropdown-item.active {
+  background-color: $light-blue !important;
+  color: white !important;
+}

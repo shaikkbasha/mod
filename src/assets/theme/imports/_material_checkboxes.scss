@@ -1,0 +1,17 @@
+.mat-checkbox.mat-accent .mat-checkbox-background, .mat-accent .mat-pseudo-checkbox-checked, .mat-accent .mat-pseudo-checkbox-indeterminate, .mat-pseudo-checkbox-checked, .mat-pseudo-checkbox-indeterminate, .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: $light-blue-light ;
+  border-radius: 0px;
+}
+
+.mat-checkbox-checked.mat-accent .mat-checkbox-background, .mat-accent .mat-pseudo-checkbox-checked, .mat-accent .mat-pseudo-checkbox-indeterminate, .mat-pseudo-checkbox-checked, .mat-pseudo-checkbox-indeterminate, .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: $light-blue ;
+  border-radius: 0px;
+}
+.mat-checkbox:not(.mat-checkbox-disabled).mat-accent .mat-checkbox-ripple .mat-ripple-element {
+  background-color: white;
+}
+
+.mat-checkbox-inner-container {
+  height: 18px !important;
+  width: 18px !important;
+}
